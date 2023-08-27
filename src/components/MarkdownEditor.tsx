@@ -1,18 +1,26 @@
 import React, { useState } from 'react';
-import MDEditor from '@uiw/react-md-editor';
+import { KitchenSinkToolbar, MDXEditor, codeBlockPlugin, codeMirrorPlugin, diffSourcePlugin, frontmatterPlugin, headingsPlugin, imagePlugin, linkDialogPlugin, linkPlugin, listsPlugin, markdownShortcutPlugin, quotePlugin, tablePlugin, thematicBreakPlugin, toolbarPlugin } from '@mdxeditor/editor';
 
-const MarkdownEditor: React.FC = () => {
-  const [value, setValue] = useState<string>("## Type your markdown here");
+export const ALL_PLUGINS = [
+  //toolbarPlugin({ toolbarContents: () => <KitchenSinkToolbar /> }), //Gets error about missing plugin or label viewMode
+  listsPlugin(),
+  quotePlugin(),
+  headingsPlugin(),
+  linkPlugin(),
+  linkDialogPlugin(),
+  imagePlugin(),
+  tablePlugin(),
+  thematicBreakPlugin(),
+  frontmatterPlugin(),
+  codeBlockPlugin({ defaultCodeBlockLanguage: 'txt' }),
+  codeMirrorPlugin({ codeBlockLanguages: { js: 'JavaScript', css: 'CSS', txt: 'text', tsx: 'TypeScript' } }),
+  diffSourcePlugin({ viewMode: 'rich-text', diffMarkdown: 'boo' }),
+  markdownShortcutPlugin()
+]
 
-  return (
+const MarkdownEditor: React.FC = () => {  return (
     <div>
-      <MDEditor
-        value={value}
-        onChange={(newValue) => setValue(newValue || '')}
-      />
-      <div style={{ marginTop: '20px' }}>
-        <MDEditor.Markdown source={value} />
-      </div>
+      <MDXEditor onChange={console.log} markdown='type here' plugins={ALL_PLUGINS} />
     </div>
   );
 };
