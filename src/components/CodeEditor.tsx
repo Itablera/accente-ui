@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react';
 import MonacoEditor from "@monaco-editor/react";
+import { transpile } from 'typescript';
 
 
 const CodeEditor: React.FC = () => {  
@@ -14,8 +15,9 @@ const CodeEditor: React.FC = () => {
     document.body.appendChild(iframe);
 
     try {
+      const compiledCode = transpile(code);
       //@ts-ignore
-      iframe.contentWindow?.eval(code);
+      iframe.contentWindow?.eval(compiledCode);
     } catch (error) {
       console.error("Error executing code:", error);
     }
