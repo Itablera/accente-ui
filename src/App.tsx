@@ -2,7 +2,7 @@ import React from 'react';
 import logo from './logo.svg';
 import './App.css';
 import MarkdownEditor from './components/MarkdownEditor';
-import CodeEditor from './components/CodeEditor';
+import CodeEditor from './components/CodeEditor3';
 
 function App() {
   return (
