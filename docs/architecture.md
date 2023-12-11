@@ -50,6 +50,15 @@ The product is an visual object manager where the user can define and add blocks
     - If ValueType of given FieldDefinition is "text", then
       - FieldDefinitionID: undefined
       - Value: The value given as FIELD-VALUE, e.g. "test-project"
+  - If no definition matching FIELD-NAME exists then a new FieldDefinition should be created with the following properties
+    - Name: The name given as FIELD-NAME, e.g. "project"
+    - ValueType: "block"
+  - If no block matching FIELD-VALUE exists then a new Block should be created with the following properties
+    - Title: The name given as FIELD-VALUE, e.g. "test-project"
+    - Type: "text"
+    - Data: Empty string
+    - BlockDefinitionID: undefined
+  - On render "::FIELD-NAME::FIELD-VALUE" should be replaced with a hyperlink to the target block (if any)
 - All Blocks and Fields should be available in runtime within the MDXEditor as two arrays:
   - blocks: A typed array of all blocks
   - fields: A typed array of all fields
