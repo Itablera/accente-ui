@@ -5,6 +5,10 @@ import { IBlock } from '../models/Block';
 const db = new PouchDB('blocks');
 
 export const BlockService = {
+    getAllBlocks: async (): Promise<IBlock[]> => {
+        const allBlocks = await db.allDocs({ include_docs: true });
+        return allBlocks.rows.map(row => row.doc) as unknown as IBlock[];
+    },
     getBlockById: async (id: string): Promise<IBlock> => {
         return await db.get(id) as IBlock;
     },
