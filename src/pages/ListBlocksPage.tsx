@@ -1,11 +1,23 @@
 // pages/ListBlocksPage.tsx
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
 import { IBlock } from '../models/Block';
+import { BlockService } from '../services/BlockService';
 
 const ListBlocksPage: React.FC = () => {
-    // Sample list of blocks (replace with actual data fetching logic)
-    const blocks: IBlock[] = [];
+    const [blocks, setBlocks] = useState<IBlock[] | null>(null);
+
+    useEffect(() => {
+        if (true) {
+            BlockService.addBlock({ id: '1', title: 'asd', data: 'asdwqedsasda asd asd asd a', type: 'text'})
+            .then(BlockService.getAllBlocks)
+            .then(setBlocks);
+        }
+    }, []);
+
+    if (!blocks) {
+        return <div>Loading...</div>;
+    }
 
     return (
         <div>

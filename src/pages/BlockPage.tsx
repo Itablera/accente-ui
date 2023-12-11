@@ -11,7 +11,10 @@ const BlockPage: React.FC = () => {
 
     useEffect(() => {
         if (id) {
-            BlockService.getBlockById(id).then(setBlock);
+            BlockService
+                .getBlockById(id)
+                .then(setBlock)
+                .catch(() => setBlock({ id: 'error', title: 'No Block found', data: '', type: 'text' }));
         }
     }, [id]);
 

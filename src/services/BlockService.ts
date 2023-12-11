@@ -10,7 +10,12 @@ export const BlockService = {
         return allBlocks.rows.map(row => row.doc) as unknown as IBlock[];
     },
     getBlockById: async (id: string): Promise<IBlock> => {
-        return await db.get(id) as IBlock;
+            const block = await db.get(id);
+            return block as unknown as IBlock;
+    },
+    addBlock: async (newBlock: IBlock): Promise<void> => {
+        const addResult = await db.post(newBlock);
+        console.log(addResult);
     },
     updateBlock: async (id: string, updatedBlock: IBlock): Promise<void> => {
         const updateResult = await db.put({

@@ -37,7 +37,7 @@ const Block: React.FC<BlockProps> = ({ block }) => {
     return (
         <div>
             <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
-            <MDXEditor markdown={content} plugins={ALL_PLUGINS} />
+            <MDXEditor markdown={content} plugins={ALL_PLUGINS} onChange={(e) => setContent(e)} />
             <button onClick={saveChanges}>Save</button>
         </div>
     );
