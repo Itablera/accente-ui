@@ -1,6 +1,7 @@
-import React, { useRef, useState } from 'react';
+import React, {  } from 'react';
 import MonacoEditor from "@monaco-editor/react";
 import { transpile } from 'typescript';
+import { CodeBlockEditorDescriptor } from '@mdxeditor/editor';
 
 
 const CodeEditor: React.FC = () => {  
@@ -56,5 +57,31 @@ const CodeEditor: React.FC = () => {
     </div>
   )
 };
+
+export function MonacoEditorPlugin() {
+  return {
+    // The regex captures content between triple backticks and the specified language (e.g., ```javascript ... ```)
+    trigger: /```(\w+)?\s([\s\S]+?)```/g,
+    replace: (match: any, lang: any, codeContent: any) => {
+      return (
+        <MonacoEditor
+          language={lang || 'javascript'}
+          value={codeContent}
+          onChange={(newValue) => {
+            // Handle value change, you might want to propagate the changes back to mdx-editor
+          }}
+        />
+      );
+    }
+  };
+}
+
+export const monacoPlugin: CodeBlockEditorDescriptor = {
+  priority: 0,
+  match: function (language: string, meta: string): boolean {
+    throw new Error('Function not implemented.');
+  },
+  Editor: CodeEditor
+}
 
 export default CodeEditor;

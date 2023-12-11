@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { KitchenSinkToolbar, MDXEditor, codeBlockPlugin, codeMirrorPlugin, diffSourcePlugin, frontmatterPlugin, headingsPlugin, imagePlugin, linkDialogPlugin, linkPlugin, listsPlugin, markdownShortcutPlugin, quotePlugin, tablePlugin, thematicBreakPlugin, toolbarPlugin } from '@mdxeditor/editor';
+import React from 'react';
+import { MDXEditor, codeBlockPlugin, frontmatterPlugin, headingsPlugin, imagePlugin, linkDialogPlugin, linkPlugin, listsPlugin, markdownShortcutPlugin, quotePlugin, tablePlugin, thematicBreakPlugin } from '@mdxeditor/editor';
+import { monacoPlugin } from './CodeEditor';
 
 export const ALL_PLUGINS = [
   //toolbarPlugin({ toolbarContents: () => <KitchenSinkToolbar /> }), //Gets error about missing plugin or label viewMode
@@ -12,10 +13,8 @@ export const ALL_PLUGINS = [
   tablePlugin(),
   thematicBreakPlugin(),
   frontmatterPlugin(),
-  codeBlockPlugin({ defaultCodeBlockLanguage: 'txt' }),
-  codeMirrorPlugin({ codeBlockLanguages: { js: 'JavaScript', css: 'CSS', txt: 'text', tsx: 'TypeScript' } }),
-  diffSourcePlugin({ viewMode: 'rich-text', diffMarkdown: 'boo' }),
-  markdownShortcutPlugin()
+  codeBlockPlugin({ defaultCodeBlockLanguage: 'txt', codeBlockEditorDescriptors: [monacoPlugin] }),
+  markdownShortcutPlugin(),
 ]
 
 const MarkdownEditor: React.FC = () => {  return (
