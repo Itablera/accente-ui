@@ -30,7 +30,6 @@ const Block: React.FC<BlockProps> = ({ block }) => {
     const [content, setContent] = useState(block.data);
 
     const saveChanges = () => {
-        // Implement saving logic
         BlockService.updateBlock(block.id, { ...block, title, data: content });
     };
 

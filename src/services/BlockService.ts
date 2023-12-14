@@ -7,7 +7,7 @@ const db = new PouchDB('blocks');
 export const BlockService = {
     getAllBlocks: async (): Promise<IBlock[]> => {
         const allBlocks = await db.allDocs({ include_docs: true });
-        return allBlocks.rows.map(row => row.doc) as unknown as IBlock[];
+        return allBlocks.rows.map(row => {return { ...row.doc, id: row.id }}) as unknown as IBlock[];
     },
     getBlockById: async (id: string): Promise<IBlock> => {
             const block = await db.get(id);

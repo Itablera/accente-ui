@@ -9,9 +9,7 @@ const ListBlocksPage: React.FC = () => {
 
     useEffect(() => {
         if (true) {
-            BlockService.addBlock({ id: '1', title: 'asd', data: 'asdwqedsasda asd asd asd a', type: 'text'})
-            .then(BlockService.getAllBlocks)
-            .then(setBlocks);
+            BlockService.getAllBlocks().then(setBlocks);
         }
     }, []);
 
