@@ -15,6 +15,7 @@ function App() {
       <Router>
           <Routes>
               <Route path="/" element={<ListBlocksPage />} />
+              <Route path="/block" element={<BlockPage />} />
               <Route path="/block/:id" element={<BlockPage />} />
               <Route path="/lab" element={<EditorLabPage />} />
               {/* Add more routes as needed */}

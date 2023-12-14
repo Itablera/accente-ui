@@ -22,15 +22,17 @@ export const ALL_PLUGINS = [
 ]
 
 interface BlockProps {
-    block: IBlock;
+    block?: IBlock;
 }
 
 const Block: React.FC<BlockProps> = ({ block }) => {
-    const [title, setTitle] = useState(block.title);
-    const [content, setContent] = useState(block.data);
+    const [title, setTitle] = useState(block && block.title);
+    const [content, setContent] = useState(block && block.data);
 
     const saveChanges = () => {
-        BlockService.updateBlock(block.id, { ...block, title, data: content });
+        if (block && block.id ) {
+            BlockService.updateBlock(block.id, { ...block, title, data: content });
+        }
     };
 
     return (

@@ -18,7 +18,7 @@ const BlockPage: React.FC = () => {
         }
     }, [id]);
 
-    if (!block) {
+    if (id && !block) {
         return <div>Loading...</div>;
     }
 

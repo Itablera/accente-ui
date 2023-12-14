@@ -1,6 +1,7 @@
 // services/BlockService.ts
 import PouchDB from 'pouchdb';
 import { IBlock } from '../models/Block';
+import { useState, useEffect } from 'react';
 
 const db = new PouchDB('blocks');
 
@@ -27,3 +28,15 @@ export const BlockService = {
     },
     // More CRUD operations...
 };
+
+export const useBlockService = ( id: string ) => {
+    const [block, setBlock] = useState(() => {
+        return BlockService.getBlockById(id);
+    });
+
+    useEffect(() => {
+        BlockService.getBlockById(id).then((block) => setBlock(block));
+    }, [id, block]);
+
+    return [block, setBlock];
+}
