@@ -22,7 +22,7 @@ const fetchSingle = async <T>(collection: CollectionType, id: string): Promise<T
     return block as unknown as T;
 };
 
-const createData = async <T>(collection: CollectionType, newData: Omit<T, '_id' | '_rev'>): Promise<T> => {
+const createData = async <T>(collection: CollectionType, newData: Omit<Partial<T>, '_id' | '_rev'>): Promise<T> => {
     const db = getDB(collection);
     const addResult = await db.post(newData);
     return addResult as unknown as T;
@@ -57,7 +57,7 @@ export const useDataService = <T extends IFieldDefinition | IBlock >(collection:
   data: T[]| undefined;
   isLoading: boolean;
   error: unknown;
-  createMutation: UseMutationResult<T, unknown, T, unknown>;
+  createMutation: UseMutationResult<Omit<Partial<T>, '_id' | '_rev'>, unknown, Omit<Partial<T>, '_id' | '_rev'>>;
   updateMutation: UseMutationResult<T, unknown, { id: string, data: Partial<T>, options?: MutationOptions }, unknown>;
   deleteMutation: UseMutationResult<void, unknown, string, unknown>;
   useGetBlock: ( id: string ) => UseQueryResult<T, unknown>;
@@ -72,7 +72,7 @@ export const useDataService = <T extends IFieldDefinition | IBlock >(collection:
 
 
   // Create Data
-  const createMutation = useMutation<T, unknown, T>({
+  const createMutation = useMutation<Omit<Partial<T>, '_id' | '_rev'>, unknown, Omit<Partial<T>, '_id' | '_rev'>>({
     mutationFn: (newData) => createData<T>(collection, newData),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: [collection]}),
   });

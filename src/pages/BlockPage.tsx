@@ -9,10 +9,6 @@ const BlockPage: React.FC = () => {
 
     const { useGetBlock } = useBlockDBService();
     const { data: block } = useGetBlock(id);
-
-    if (!block) {
-        return <div>Loading...</div>;
-    }
     
     return (
         <div>

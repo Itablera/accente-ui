@@ -27,23 +27,20 @@ interface BlockProps {
 }
 
 const Block: React.FC<BlockProps> = ({ block }) => {
-    const [title, setTitle] = useState(block && block.title);
-    const [content = '', setContent] = useState(block && block.data);
+    const { updateMutation, createMutation } = useBlockDBService();
 
-    const { updateMutation } = useBlockDBService();
-    const { mutate } = updateMutation;
-
-    const saveChanges = () => {
-        if (block && block._id ) {
-            mutate({ id: block._id, data: { data: content}});
+    const createOrUpdateBlock = (change: Omit<Partial<IBlock>, '_id' | '_rev'>) => {
+        if (block && block._id) {
+            updateMutation.mutate({ id: block._id, data: change});
+        } else {
+            createMutation.mutate(change);
         }
-    };
+    }
 
     return (
         <div>
-            <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
-sd            <MDXEditor markdown={content} plugins={ALL_PLUGINS} onChange={(e) => setContent(e)} />
-            <button onClick={saveChanges}>Save</button>
+            <input type="text" value={block?.title || ''} onChange={(e) => createOrUpdateBlock({ title: e.target.value})} />
+            <MDXEditor markdown={block?.data || ''} plugins={ALL_PLUGINS} onChange={(e) => createOrUpdateBlock({ data: e})} />
         </div>
     );
 };
