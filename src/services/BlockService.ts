@@ -2,6 +2,7 @@
 import PouchDB from 'pouchdb';
 import { IBlock } from '../models/Block';
 import { useState, useEffect } from 'react';
+import { UseMutationOptions, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 const db = new PouchDB('blocks');
 
@@ -18,7 +19,7 @@ export const BlockService = {
         const addResult = await db.post(newBlock);
         console.log(addResult);
     },
-    updateBlock: async (id: string, updatedBlock: IBlock): Promise<void> => {
+    updateBlock: async (id: string, updatedBlock: Partial<IBlock>): Promise<void> => {
         const updateResult = await db.put({
             _id: id,
             ...updatedBlock,
@@ -26,17 +27,63 @@ export const BlockService = {
 
         console.log(updateResult);
     },
-    // More CRUD operations...
+    deleteBlock: async (id: string): Promise<void> => {
+        const doc = await db.get(id);
+        const updateResult = await db.remove(doc);
+
+        console.log(updateResult);
+    },
 };
 
-export const useBlockService = ( id: string ) => {
-    const [block, setBlock] = useState(() => {
-        return BlockService.getBlockById(id);
+export const useBlockService = ( options: UseMutationOptions = {} ) => {
+    const queryClient = useQueryClient();
+
+    const id = 'some-id';
+    const block: IBlock = { _id: 'some-id', title: 'Some Title', type: 'text', data: 'Some Data' };
+
+    // Fetch Data
+    const { data, isLoading, error } = useQuery({ 
+        queryKey: [ 'block', id ] , 
+        queryFn: () => BlockService.getBlockById 
     });
 
-    useEffect(() => {
-        BlockService.getBlockById(id).then((block) => setBlock(block));
-    }, [id, block]);
+    // Create Data
+    const createMutation = useMutation({
+        mutationKey: [ 'block', block ],
+        mutationFn: () => BlockService.addBlock(block),
+        ...options
+    });
 
-    return [block, setBlock];
+    // Update Data
+    const updateMutation = useMutation({
+        mutationKey: [ 'block', block ],
+        mutationFn: () => BlockService.updateBlock(id, block),
+        ...options
+    });
+
+    // Delete Data
+    const deleteMutation = useMutation({
+        mutationKey: [ 'block', block ],
+        mutationFn: () => BlockService.deleteBlock(id),
+        ...options
+    });
+
+    return { data, isLoading, error, createMutation, updateMutation, deleteMutation };
 }
+
+export const useGetBlock = ( id: string, options: UseMutationOptions = {} ) => useQuery({ 
+    queryKey: [ 'block', id ] , 
+    queryFn: () => BlockService.getBlockById 
+});
+
+export const useCreateBlock = ( block: IBlock, options: UseMutationOptions = {} ) => useMutation({
+    ...options,
+    mutationKey: [ 'block', block ],
+    mutationFn: () => BlockService.addBlock(block)
+});
+
+export const useUpdateBlock = ( id: string, block: Partial<IBlock>, options: UseMutationOptions = {} ) => useMutation({
+    ...options,
+    mutationKey: [ 'block', block ],
+    mutationFn: () => BlockService.updateBlock(id, block)
+});

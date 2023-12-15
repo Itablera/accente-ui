@@ -1,19 +1,12 @@
 // pages/ListBlocksPage.tsx
-import React, { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
-import { IBlock } from '../models/Block';
-import { BlockService } from '../services/BlockService';
+import React, {  } from 'react';
+import { Link } from 'react-router-dom';
+import { useBlockDBService } from '../services/DBService';
 
 const ListBlocksPage: React.FC = () => {
-    const [blocks, setBlocks] = useState<IBlock[] | null>(null);
+    const { data } = useBlockDBService();
 
-    useEffect(() => {
-        if (true) {
-            BlockService.getAllBlocks().then(setBlocks);
-        }
-    }, []);
-
-    if (!blocks) {
+    if (!data) {
         return <div>Loading...</div>;
     }
 
@@ -21,9 +14,9 @@ const ListBlocksPage: React.FC = () => {
         <div>
             <h1>List of Blocks</h1>
             <ul>
-                {blocks.map((block) => (
-                    <li key={block.id}>
-                        <Link to={`/block/${block.id}`}>{block.title}</Link>
+                {data.map((block) => (
+                    <li key={block._id}>
+                        <Link to={`/block/${block._id}`}>{block.title}</Link>
                     </li>
                 ))}
             </ul>

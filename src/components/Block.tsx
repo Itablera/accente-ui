@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { IBlock } from '../models/Block';
 import { BlockService } from '../services/BlockService';
 import { KitchenSinkToolbar, MDXEditor, codeBlockPlugin, codeMirrorPlugin, diffSourcePlugin, frontmatterPlugin, headingsPlugin, imagePlugin, linkDialogPlugin, linkPlugin, listsPlugin, markdownShortcutPlugin, quotePlugin, tablePlugin, thematicBreakPlugin, toolbarPlugin } from '@mdxeditor/editor';
+import { useBlockDBService } from '../services/DBService';
 
 export const ALL_PLUGINS = [
   //toolbarPlugin({ toolbarContents: () => <KitchenSinkToolbar /> }), //Gets error about missing plugin or label viewMode
@@ -27,18 +28,21 @@ interface BlockProps {
 
 const Block: React.FC<BlockProps> = ({ block }) => {
     const [title, setTitle] = useState(block && block.title);
-    const [content, setContent] = useState(block && block.data);
+    const [content = '', setContent] = useState(block && block.data);
+
+    const { updateMutation } = useBlockDBService();
+    const { mutate } = updateMutation;
 
     const saveChanges = () => {
-        if (block && block.id ) {
-            BlockService.updateBlock(block.id, { ...block, title, data: content });
+        if (block && block._id ) {
+            mutate({ id: block._id, data: { data: content}});
         }
     };
 
     return (
         <div>
             <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
-            <MDXEditor markdown={content} plugins={ALL_PLUGINS} onChange={(e) => setContent(e)} />
+sd            <MDXEditor markdown={content} plugins={ALL_PLUGINS} onChange={(e) => setContent(e)} />
             <button onClick={saveChanges}>Save</button>
         </div>
     );
