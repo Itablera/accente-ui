@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { useBlockDBService } from '../services/DBService';
 
 const ListBlocksPage: React.FC = () => {
-    const { data } = useBlockDBService();
+    const { list: data } = useBlockDBService();
 
     if (!data) {
         return <div>Loading...</div>;

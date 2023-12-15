@@ -1,5 +1,5 @@
 import PouchDB from 'pouchdb';
-import { useQuery, useMutation, useQueryClient, UseQueryResult, UseMutationResult, MutationOptions } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, MutationOptions, UseMutateFunction } from '@tanstack/react-query';
 import { IFieldDefinition, IBlock } from '../models';
 
 type CollectionType = 'blocks' | 'fieldDefinitions' | 'fields';
@@ -22,7 +22,7 @@ const fetchSingle = async <T>(collection: CollectionType, id: string): Promise<T
     return block as unknown as T;
 };
 
-const createData = async <T>(collection: CollectionType, newData: Omit<Partial<T>, '_id' | '_rev'>): Promise<T> => {
+const createData = async <T>(collection: CollectionType, newData: Partial<T>): Promise<T> => {
     const db = getDB(collection);
     const addResult = await db.post(newData);
     return addResult as unknown as T;
@@ -53,43 +53,81 @@ const deleteData = async (collection: CollectionType, id: string): Promise<void>
     const updateResult = await db.remove(doc);
 };
 
-export const useDataService = <T extends IFieldDefinition | IBlock >(collection: CollectionType): {
-  data: T[]| undefined;
-  isLoading: boolean;
-  error: unknown;
-  createMutation: UseMutationResult<Omit<Partial<T>, '_id' | '_rev'>, unknown, Omit<Partial<T>, '_id' | '_rev'>>;
-  updateMutation: UseMutationResult<T, unknown, { id: string, data: Partial<T>, options?: MutationOptions }, unknown>;
-  deleteMutation: UseMutationResult<void, unknown, string, unknown>;
-  useGetBlock: ( id: string ) => UseQueryResult<T, unknown>;
-} => {
-  const queryClient = useQueryClient();
+export type UseDataService<T> = () => {
+    data: T | undefined;
+    error: unknown;
+    setData: UseMutateFunction<T, unknown, {
+        data: Partial<T>;
+        options?: MutationOptions<unknown, Error, void, unknown> | undefined;
+    }, unknown>
+}
 
-  // Fetch Data
-  const { data, isLoading, error } = useQuery<T[], unknown>({ queryKey: [collection], queryFn: () => fetchData<T>(collection)});
+export const useDataService = <T extends IFieldDefinition | IBlock >(collection: CollectionType) => {
+    const queryClient = useQueryClient();
 
-  // Fetch single
-  const useGetBlock = ( id: string ) => useQuery<T, unknown>({ queryKey: [collection, id], queryFn: () => fetchSingle<T>(collection, id)});
+    // Fetch Data
+    const { data: list, isLoading, error } = useQuery<T[], unknown>({ queryKey: [collection], queryFn: () => fetchData<T>(collection)});
+
+    // Fetch single
+    const useGetBlock = ( id: string ) => useQuery<T, unknown>({ queryKey: [collection, id], queryFn: () => fetchSingle<T>(collection, id)});
 
 
-  // Create Data
-  const createMutation = useMutation<Omit<Partial<T>, '_id' | '_rev'>, unknown, Omit<Partial<T>, '_id' | '_rev'>>({
-    mutationFn: (newData) => createData<T>(collection, newData),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: [collection]}),
-  });
+    // Create Data
+    const createMutation = useMutation<T, unknown, { data: Partial<T>, options?: MutationOptions }>({
+        mutationFn: ({ data: newData}) => createData<T>(collection, newData),
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: [collection]}),
+    });
+    const useCreateMutation: UseDataService<T>  = () => { 
+        return { data: createMutation.data, error: createMutation.error, setData: createMutation.mutate };
+    };
 
-  // Update Data
-  const updateMutation = useMutation<T, { id: string, options: {} }, { id: string, data: Partial<T>, options?: MutationOptions }>({
-    mutationFn: ({ id, data: newData}) => updateData<T>(collection, id, newData),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: [collection]}),
-  });
+    // Update Data
+    const updateMutation = useMutation<T, unknown, { data: Partial<T>, options?: MutationOptions }>({
+        mutationFn: ({ data: newData}) => updateData<T>(collection, newData._id = '', newData),
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: [collection]}),
+    });
+    const useUpdateMutation: UseDataService<T> = () => { 
+        return { data: updateMutation.data, error: updateMutation.error, setData: updateMutation.mutate };
+    };
 
-  // Delete Data
-  const deleteMutation = useMutation<void, unknown, string>({
-    mutationFn: (id) => deleteData(collection, id),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: [collection]}),
-  });
+    // Delete Data
+    const deleteMutation = useMutation<void, unknown, string>({
+        mutationFn: (id) => deleteData(collection, id),
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: [collection]}),
+    });
 
-  return { data, isLoading, error, createMutation, updateMutation, deleteMutation, useGetBlock };
+    return { list, isLoading, error, createMutation, updateMutation, deleteMutation, useGetBlock, useCreateMutation, useUpdateMutation };
 };
 
 export const useBlockDBService = () => useDataService<IBlock>('blocks');
+
+export type BlockStorage = {
+    data: IBlock | undefined;
+    setData: UseMutateFunction<IBlock, unknown, {
+        data: Partial<IBlock>;
+        options?: MutationOptions<unknown, Error, void, unknown> | undefined;
+    }, unknown>;
+    isLoading: boolean;
+    isFetching: boolean;
+}
+export type UseBlockStorage = (id: string, defaultValue?: IBlock) => BlockStorage;
+
+export const useBlockStorage: UseBlockStorage = (id: string, defaultValue:IBlock = { _id: id, title: '', type: 'text', data: '' }) => {
+    const queryClient = useQueryClient();
+  
+    // Fetching data from localStorage
+    const { data, isLoading, isFetching } = useQuery<IBlock, unknown>({
+        queryKey: ['blocks', id],
+        queryFn: () => fetchSingle('blocks', id),
+        placeholderData: defaultValue,
+        staleTime: Infinity,
+    });
+  
+    // Update localStorage
+    const { mutate: setData } = useMutation<IBlock, unknown, { data: Partial<IBlock>, options?: MutationOptions }>({
+        mutationFn: ({ data }) => updateData<IBlock>('blocks', id, data),
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: ['blocks', id]}),
+    });
+  
+    return {data, setData, isLoading, isFetching};
+  };
