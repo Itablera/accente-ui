@@ -112,14 +112,13 @@ export type BlockStorage = {
 }
 export type UseBlockStorage = (id: string, defaultValue?: IBlock) => BlockStorage;
 
-export const useBlockStorage: UseBlockStorage = (id: string, defaultValue:IBlock = { _id: id, title: '', type: 'text', data: '' }) => {
+export const useBlockStorage: UseBlockStorage = (id: string) => {
     const queryClient = useQueryClient();
   
     // Fetching data from localStorage
     const { data, isLoading, isFetching } = useQuery<IBlock, unknown>({
         queryKey: ['blocks', id],
         queryFn: () => fetchSingle('blocks', id),
-        placeholderData: defaultValue,
         staleTime: Infinity,
     });
   
@@ -130,4 +129,4 @@ export const useBlockStorage: UseBlockStorage = (id: string, defaultValue:IBlock
     });
   
     return {data, setData, isLoading, isFetching};
-  };
+};
