@@ -17,7 +17,7 @@ const BlockPage: React.FC = () => {
     return (
         <div>
             <h1>Block Page </h1>
-            <Block useBlock={useBlock} />
+            <Block block={data} useBlock={useBlock} />
         </div>
     );
 };
