@@ -1,10 +1,9 @@
 // Block.tsx
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { IBlock } from '../models/Block';
-import { BlockService } from '../services/BlockService';
-import { KitchenSinkToolbar, MDXEditor, codeBlockPlugin, codeMirrorPlugin, diffSourcePlugin, frontmatterPlugin, headingsPlugin, imagePlugin, linkDialogPlugin, linkPlugin, listsPlugin, markdownShortcutPlugin, quotePlugin, tablePlugin, thematicBreakPlugin, toolbarPlugin } from '@mdxeditor/editor';
-import { BlockStorage, UseBlockStorage, UseDataService, useBlockDBService } from '../services/DBService';
-import { debounce } from 'lodash';
+import { MDXEditor, codeBlockPlugin, codeMirrorPlugin, diffSourcePlugin, frontmatterPlugin, headingsPlugin, imagePlugin, linkDialogPlugin, linkPlugin, listsPlugin, markdownShortcutPlugin, quotePlugin, tablePlugin, thematicBreakPlugin } from '@mdxeditor/editor';
+import { BlockStorage } from '../services/DBService';
+import { useDebouncedValue, useDebouncedFunction } from '../services/Debounce';
 
 export const ALL_PLUGINS = [
   //toolbarPlugin({ toolbarContents: () => <KitchenSinkToolbar /> }), //Gets error about missing plugin or label viewMode
@@ -29,39 +28,31 @@ interface BlockProps {
 }
 
 const Block: React.FC<BlockProps> = ({ block, useBlock }) => {
-    const [ data, setData ] = useState<Partial<IBlock> | undefined>(block);
+    const [data, setData] = useState<IBlock>(block);
+    const debouncedData = useDebouncedValue<IBlock>(data, 1000)
     const { data: persistedData, setData: setPersistedData } = useBlock;
-    if (!data) {
-        throw new Error('Data is undefined');
+    const apiCall = (change: Partial<IBlock>) => setPersistedData({data: change});
+    //const apiCall = () => console.log('api call');
+    const debouncedAPICall = useDebouncedFunction(setPersistedData, 1000)
+    const handleChange = (change: Partial<IBlock>) => {
+        setData({ ...data, ...change })
+        debouncedAPICall({data: change})
     }
 
-    /*useEffect(() => {
-        const handler = debounce(() => setPersistedData({data}), 500);
-        handler();
-
-        return () => handler.cancel();
-    }, [data]);*/
-
-    useDebouncedEffect(() => {
-        if (data) {
-            setPersistedData({data});
-        }
-    }
-    , [data, persistedData], 1000);
+      if (!data || !debouncedData) {
+          return <div>Loading...</div>;
+      }
 
     return (
         <div>
-            <input type="text" value={data?.title || ''} onChange={(e) => setData({ title: e.target.value })} />
-            <MDXEditor markdown={data?.data || ''} plugins={ALL_PLUGINS} onChange={(e) => setData({ data: e })} />
+
+            <p>Value real-time: {data.title}</p>
+            <p>Debounced value: {debouncedData.title}</p>
+            <p>Persisted value: {persistedData?.title}</p>
+            <input value={data.title} onChange={(e) => handleChange({ title: e.target.value })} />
+            <MDXEditor markdown={data.data} onChange={(e) => handleChange({ data: e })} />
         </div>
     );
 };
-
-function useDebouncedEffect(callback: () => void, deps: any[], delay: number) {
-    useEffect(() => {
-        const handler = setTimeout(() => callback(), delay);
-        return () => clearTimeout(handler);
-    }, [...deps, delay]);
-}
 
 export default Block;

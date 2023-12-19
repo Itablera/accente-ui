@@ -28,7 +28,7 @@ const createData = async <T>(collection: CollectionType, newData: Partial<T>): P
     return addResult as unknown as T;
 };
 
-const updateData = async <T extends IFieldDefinition | IBlock>(collection: CollectionType, id: string, updatedData: Partial<T>): Promise<T> => {
+export const updateData = async <T extends IFieldDefinition | IBlock>(collection: CollectionType, id: string, updatedData: Partial<T>): Promise<T> => {
     const db = getDB(collection);
     const { _id: userProvidedId, _rev: userProvidedRev, ...properties } = updatedData;
     try {
