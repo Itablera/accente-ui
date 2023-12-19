@@ -1,9 +1,9 @@
-import React, { useRef, useState } from 'react';
+import React from 'react';
 import MonacoEditor from "@monaco-editor/react";
 import { transpile } from 'typescript';
 
 
-const CodeEditor: React.FC = () => {  
+export const CodeEditor: React.FC = () => {  
   const [code, setCode] = React.useState("//Just a comment");
 
   function handleEditorChange(value: any, event: any) {
