@@ -1,11 +1,11 @@
 // Block.tsx
 import React, { ChangeEvent, useState } from 'react';
-import { IBlock } from '../models/Block';
+import { IBlock, IBlockDoc } from '../models/Block';
 import { MDXEditor, codeBlockPlugin, codeMirrorPlugin, diffSourcePlugin, frontmatterPlugin, headingsPlugin, imagePlugin, linkDialogPlugin, linkPlugin, listsPlugin, markdownShortcutPlugin, quotePlugin, tablePlugin, thematicBreakPlugin } from '@mdxeditor/editor';
-import { useBlockStorage } from '../services/DBService';
-import { useDebouncedFunction } from '../services/Debounce';
+import { useBlock } from '../hooks/Block';
+import { useDebouncedFunction } from '../hooks/Debounce';
 
-export const ALL_PLUGINS = [
+const ALL_PLUGINS = [
   //toolbarPlugin({ toolbarContents: () => <KitchenSinkToolbar /> }), //Gets error about missing plugin or label viewMode
   listsPlugin(),
   quotePlugin(),
@@ -23,13 +23,13 @@ export const ALL_PLUGINS = [
 ]
 
 interface BlockProps {
-    block: IBlock;
+    block: IBlockDoc;
 }
 
-const Block: React.FC<BlockProps> = ({ block }) => {
+export const Block: React.FC<BlockProps> = ({ block }) => {
     const [ title, setTitle ] = useState(block.title);
     const [ data, setData ] = useState(block.data);
-    const { setBlock: setPersistedData } = useBlockStorage(block._id);
+    const { setBlock: setPersistedData } = useBlock(block._id);
     const debouncedAPICall = useDebouncedFunction(setPersistedData, 500)
     const handleTitleChange = (change: ChangeEvent<HTMLInputElement>) => {
         setTitle(change.target.value);

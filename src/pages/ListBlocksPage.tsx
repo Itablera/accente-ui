@@ -1,12 +1,13 @@
 // pages/ListBlocksPage.tsx
 import React, {  } from 'react';
 import { Link } from 'react-router-dom';
-import { useBlockDBService } from '../services/DBService';
+import { useBlock } from '../hooks/Block';
+import { useBlocks } from '../hooks/Blocks';
 
 const ListBlocksPage: React.FC = () => {
-    const { list: data } = useBlockDBService();
+    const { blocks } = useBlocks();
 
-    if (!data) {
+    if (!blocks) {
         return <div>Loading...</div>;
     }
 
@@ -14,7 +15,7 @@ const ListBlocksPage: React.FC = () => {
         <div>
             <h1>List of Blocks</h1>
             <ul>
-                {data.map((block) => (
+                {blocks.map((block) => (
                     <li key={block._id}>
                         <Link to={`/block/${block._id}`}>{block.title}</Link>
                     </li>

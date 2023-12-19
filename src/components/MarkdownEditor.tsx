@@ -18,7 +18,7 @@ export const ALL_PLUGINS = [
   markdownShortcutPlugin()
 ]
 
-const MarkdownEditor: React.FC = () => {  return (
+export const MarkdownEditor: React.FC = () => {  return (
     <div>
       <MDXEditor onChange={console.log} markdown='type here' plugins={ALL_PLUGINS} />
     </div>

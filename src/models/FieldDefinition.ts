@@ -1,6 +1,8 @@
 import { IDoc } from "./DB";
 
-export interface IFieldDefinition extends IDoc {
+export interface IFieldDefinition {
     name: string;
     ValueType: 'block' | 'text' | 'date'
 }
+
+export type IFieldDefinitionDoc = IFieldDefinition & IDoc;

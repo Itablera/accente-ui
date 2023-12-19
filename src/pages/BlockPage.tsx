@@ -1,14 +1,12 @@
 // BlockPage.tsx
-import React, {  } from 'react';
+import React from 'react';
 import { useParams } from 'react-router-dom';
-import Block from '../components/Block';
-import { useBlockStorage } from '../services/DBService';
+import { useBlock } from '../hooks/Block';
+import { Block } from '../components';
 
 const BlockPage: React.FC = () => {
     const { id = '' } = useParams<{ id: string }>();
-
-    const useBlock = useBlockStorage(id);
-    const { block, isFetching, isLoading } = useBlock;
+    const { block, isFetching, isLoading } = useBlock(id);
 
     if (!block || isLoading || isFetching) {
         return <div>Loading...</div>;
