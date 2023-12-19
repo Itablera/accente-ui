@@ -102,8 +102,8 @@ export const useDataService = <T extends IFieldDefinition | IBlock >(collection:
 export const useBlockDBService = () => useDataService<IBlock>('blocks');
 
 export type BlockStorage = {
-    data: IBlock | undefined;
-    setData: UseMutateFunction<IBlock, unknown, {
+    block: IBlock | undefined;
+    setBlock: UseMutateFunction<IBlock, unknown, {
         data: Partial<IBlock>;
         options?: MutationOptions<unknown, Error, void, unknown> | undefined;
     }, unknown>;
@@ -116,17 +116,17 @@ export const useBlockStorage: UseBlockStorage = (id: string) => {
     const queryClient = useQueryClient();
   
     // Fetching data from localStorage
-    const { data, isLoading, isFetching } = useQuery<IBlock, unknown>({
+    const { data: block, isLoading, isFetching } = useQuery<IBlock, unknown>({
         queryKey: ['blocks', id],
         queryFn: () => fetchSingle('blocks', id),
         staleTime: Infinity,
     });
   
     // Update localStorage
-    const { mutate: setData } = useMutation<IBlock, unknown, { data: Partial<IBlock>, options?: MutationOptions }>({
+    const { mutate: setBlock } = useMutation<IBlock, unknown, { data: Partial<IBlock>, options?: MutationOptions }>({
         mutationFn: ({ data }) => updateData<IBlock>('blocks', id, data),
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ['blocks', id]}),
     });
   
-    return {data, setData, isLoading, isFetching};
+    return {block, setBlock, isLoading, isFetching};
 };

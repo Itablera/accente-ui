@@ -8,16 +8,16 @@ const BlockPage: React.FC = () => {
     const { id = '' } = useParams<{ id: string }>();
 
     const useBlock = useBlockStorage(id);
-    const { data, isFetching, isLoading } = useBlock;
+    const { block, isFetching, isLoading } = useBlock;
 
-    if (!data || isLoading || isFetching) {
+    if (!block || isLoading || isFetching) {
         return <div>Loading...</div>;
     }
     
     return (
         <div>
             <h1>Block Page </h1>
-            <Block block={data} useBlock={useBlock} />
+            <Block block={block} />
         </div>
     );
 };

@@ -1,9 +1,9 @@
 // Block.tsx
-import React, { useState } from 'react';
+import React, { ChangeEvent, useState } from 'react';
 import { IBlock } from '../models/Block';
 import { MDXEditor, codeBlockPlugin, codeMirrorPlugin, diffSourcePlugin, frontmatterPlugin, headingsPlugin, imagePlugin, linkDialogPlugin, linkPlugin, listsPlugin, markdownShortcutPlugin, quotePlugin, tablePlugin, thematicBreakPlugin } from '@mdxeditor/editor';
-import { BlockStorage } from '../services/DBService';
-import { useDebouncedValue, useDebouncedFunction } from '../services/Debounce';
+import { useBlockStorage } from '../services/DBService';
+import { useDebouncedFunction } from '../services/Debounce';
 
 export const ALL_PLUGINS = [
   //toolbarPlugin({ toolbarContents: () => <KitchenSinkToolbar /> }), //Gets error about missing plugin or label viewMode
@@ -24,33 +24,30 @@ export const ALL_PLUGINS = [
 
 interface BlockProps {
     block: IBlock;
-    useBlock: BlockStorage;
 }
 
-const Block: React.FC<BlockProps> = ({ block, useBlock }) => {
-    const [data, setData] = useState<IBlock>(block);
-    const debouncedData = useDebouncedValue<IBlock>(data, 1000)
-    const { data: persistedData, setData: setPersistedData } = useBlock;
-    const apiCall = (change: Partial<IBlock>) => setPersistedData({data: change});
-    //const apiCall = () => console.log('api call');
-    const debouncedAPICall = useDebouncedFunction(setPersistedData, 1000)
-    const handleChange = (change: Partial<IBlock>) => {
-        setData({ ...data, ...change })
-        debouncedAPICall({data: change})
+const Block: React.FC<BlockProps> = ({ block }) => {
+    const [ title, setTitle ] = useState(block.title);
+    const [ data, setData ] = useState(block.data);
+    const { setBlock: setPersistedData } = useBlockStorage(block._id);
+    const debouncedAPICall = useDebouncedFunction(setPersistedData, 500)
+    const handleTitleChange = (change: ChangeEvent<HTMLInputElement>) => {
+        setTitle(change.target.value);
+        debouncedAPICall({data: { title: change.target.value }});
+    }
+    const handleDataChange = (change: string) => {
+        setData(change);
+        debouncedAPICall({data: { data: change }});
     }
 
-      if (!data || !debouncedData) {
+      if (!block) {
           return <div>Loading...</div>;
       }
 
     return (
         <div>
-
-            <p>Value real-time: {data.title}</p>
-            <p>Debounced value: {debouncedData.title}</p>
-            <p>Persisted value: {persistedData?.title}</p>
-            <input value={data.title} onChange={(e) => handleChange({ title: e.target.value })} />
-            <MDXEditor markdown={data.data} onChange={(e) => handleChange({ data: e })} />
+            <input value={title} onChange={handleTitleChange} />
+            <MDXEditor markdown={data} onChange={handleDataChange} />
         </div>
     );
 };
