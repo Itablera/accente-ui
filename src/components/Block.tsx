@@ -1,9 +1,8 @@
 // Block.tsx
 import React, { ChangeEvent, useState } from 'react';
-import { IBlock, IBlockDoc } from '../models/Block';
+import { IBlockDoc } from '../models';
 import { MDXEditor, codeBlockPlugin, codeMirrorPlugin, diffSourcePlugin, frontmatterPlugin, headingsPlugin, imagePlugin, linkDialogPlugin, linkPlugin, listsPlugin, markdownShortcutPlugin, quotePlugin, tablePlugin, thematicBreakPlugin } from '@mdxeditor/editor';
-import { useBlock } from '../hooks/Block';
-import { useDebouncedFunction } from '../hooks/Debounce';
+import { useBlock, useDebouncedFunction } from '../hooks';
 
 const ALL_PLUGINS = [
   //toolbarPlugin({ toolbarContents: () => <KitchenSinkToolbar /> }), //Gets error about missing plugin or label viewMode

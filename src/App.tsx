@@ -1,8 +1,6 @@
 import './App.css';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import BlockPage from './pages/BlockPage';
-import ListBlocksPage from './pages/ListBlocksPage';
-import EditorLabPage from './pages/EditorLab';
+import { BlockPage, ListBlocksPage, EditorLabPage } from './pages';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 function App() {

@@ -1,4 +1,4 @@
-import { IDoc } from "./DB";
+import { IDoc } from "./";
 
 export interface IFieldDefinition {
     name: string;

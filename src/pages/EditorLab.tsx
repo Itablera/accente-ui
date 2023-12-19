@@ -1,9 +1,8 @@
 // pages/ListBlocksPage.tsx
 import React from 'react';
-import CodeEditor from '../components/CodeEditor';
-import MarkdownEditor from '../components/MarkdownEditor';
+import { CodeEditor, MarkdownEditor} from '../components';
 
-const EditorLabPage: React.FC = () => {
+export const EditorLabPage: React.FC = () => {
 
     return (
         <div>

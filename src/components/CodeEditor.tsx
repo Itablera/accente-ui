@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React from 'react';
 import MonacoEditor from "@monaco-editor/react";
 import { transpile } from 'typescript';
 
