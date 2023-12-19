@@ -5,10 +5,14 @@ import { useBlock } from '../hooks/Block';
 import { useBlocks } from '../hooks/Blocks';
 
 const ListBlocksPage: React.FC = () => {
-    const { blocks } = useBlocks();
+    const { blocks, addBlock } = useBlocks();
 
     if (!blocks) {
         return <div>Loading...</div>;
+    }
+
+    const handleAddBlock = () => {
+        addBlock({ data: { title: 'New Block', data: '' } });
     }
 
     return (
@@ -21,6 +25,7 @@ const ListBlocksPage: React.FC = () => {
                     </li>
                 ))}
             </ul>
+            <button onClick={handleAddBlock}>Add Block</button>
         </div>
     );
 };
