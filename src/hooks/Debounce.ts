@@ -15,7 +15,7 @@ export function useDebouncedValue<T>(value: T, delay?: number): T {
   return debouncedValue
 }
 
-export function useDebouncedFunction<T extends any[]>(func: (...args: T) => void, delay: number = 500): (...args: T) => void {
+export function useDebouncedFunction<T extends any[]>(func: (...args: T) => void, delay = 500): (...args: T) => void {
   const debouncedFunction = useMemo(
     () => debounce(func, delay),
     [func, delay]

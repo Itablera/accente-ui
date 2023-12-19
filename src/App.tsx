@@ -1,7 +1,8 @@
-import './App.css';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { BlockPage, ListBlocksPage, EditorLabPage } from './pages';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import ListBlocksPage from './pages/ListBlocksPage';
+import BlockPage from './pages/BlockPage';
+import EditorLabPage from './pages/EditorLab';
 
 function App() {
   const queryClient = new QueryClient();
@@ -19,7 +20,7 @@ function App() {
       </Router>
     </div>
     </QueryClientProvider>
-  );
+  )
 }
 
-export default App;
+export default App

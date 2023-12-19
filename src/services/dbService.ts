@@ -1,5 +1,6 @@
 import PouchDB from 'pouchdb';
-import { IFieldDefinitionDoc, IBlockDoc } from '../models';
+import { IBlockDoc } from '../models/Block';
+import { IFieldDefinitionDoc } from '../models/FieldDefinition';
 
 type CollectionType = 'blocks' | 'fieldDefinitions' | 'fields';
 const blocksDB = new PouchDB('blocks');
