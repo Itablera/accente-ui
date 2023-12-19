@@ -1,1 +1,1 @@
-export * from './_dbService';
+export * from './dbService';
