@@ -39,6 +39,9 @@ import {
   type JsxComponentDescriptor,
   jsxPluginHooks,
   Button,
+  directivesPlugin,
+  DirectiveDescriptor,
+  GenericDirectiveEditor,
 } from '@mdxeditor/editor';
 
 import { MDXEditor, type MDXEditorMethods, type MDXEditorProps } from '@mdxeditor/editor/MDXEditor';
@@ -170,7 +173,7 @@ const jsxComponentDescriptors: JsxComponentDescriptor[] = [
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             getUpdatedMdastNode={(mdastNode, children: any) => {
               return { ...mdastNode, children };
-            }} block={false}
+            }}
           />
         </div>
       );
@@ -202,6 +205,17 @@ const jsxComponentDescriptors: JsxComponentDescriptor[] = [
   },
 ];
 
+const CalloutDirectiveDescriptor: DirectiveDescriptor = {
+    name: 'callout',
+    testNode(node) {
+      return node.name === 'callout'
+    },
+    // set some attribute names to have the editor display a property editor popup.
+    attributes: [],
+    // used by the generic editor to determine whether or not to render a nested editor.
+    hasChildren: true,
+    Editor: GenericDirectiveEditor
+  }
 
 
 const InsertMyLeaf = () => {
@@ -244,6 +258,7 @@ export default function MdxFen({ editorRef, ...props }: EditorProps) {
         tablePlugin(),
         frontmatterPlugin(),
         jsxPlugin({ jsxComponentDescriptors }),
+        directivesPlugin({ directiveDescriptors: [ CalloutDirectiveDescriptor] }),
         diffSourcePlugin({ viewMode: 'rich-text', diffMarkdown: 'boo' }),
         codeBlockPlugin({ defaultCodeBlockLanguage: 'js' }),
         codeMirrorPlugin({
