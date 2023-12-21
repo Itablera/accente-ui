@@ -1,25 +1,9 @@
 import React, { ChangeEvent, useState } from 'react';
 import { IBlockDoc } from '../models/Block';
-import { MDXEditor, codeBlockPlugin, codeMirrorPlugin, diffSourcePlugin, frontmatterPlugin, headingsPlugin, imagePlugin, linkDialogPlugin, linkPlugin, listsPlugin, markdownShortcutPlugin, quotePlugin, tablePlugin, thematicBreakPlugin } from '@mdxeditor/editor';
+import { MDXEditor } from '@mdxeditor/editor';
 import { useDebouncedFunction } from '../hooks/Debounce';
 import { useBlock } from '../hooks/Block';
 
-const ALL_PLUGINS = [
-  //toolbarPlugin({ toolbarContents: () => <KitchenSinkToolbar /> }), //Gets error about missing plugin or label viewMode
-  listsPlugin(),
-  quotePlugin(),
-  headingsPlugin(),
-  linkPlugin(),
-  linkDialogPlugin(),
-  imagePlugin(),
-  tablePlugin(),
-  thematicBreakPlugin(),
-  frontmatterPlugin(),
-  codeBlockPlugin({ defaultCodeBlockLanguage: 'txt' }),
-  codeMirrorPlugin({ codeBlockLanguages: { js: 'JavaScript', css: 'CSS', txt: 'text', tsx: 'TypeScript' } }),
-  diffSourcePlugin({ viewMode: 'rich-text', diffMarkdown: 'boo' }),
-  markdownShortcutPlugin()
-]
 
 interface BlockProps {
     block: IBlockDoc;
@@ -29,7 +13,7 @@ export const Block: React.FC<BlockProps> = ({ block }) => {
     const [ title, setTitle ] = useState(block.title);
     const [ data, setData ] = useState(block.data);
     const { setBlock: setPersistedData } = useBlock(block._id);
-    const debouncedAPICall = useDebouncedFunction(setPersistedData, 500)
+    const debouncedAPICall = useDebouncedFunction(setPersistedData, 1000)
     const handleTitleChange = (change: ChangeEvent<HTMLInputElement>) => {
         setTitle(change.target.value);
         debouncedAPICall({data: { title: change.target.value }});
