@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient, MutationOptions, UseMutateFunction } from '@tanstack/react-query';
-import { IBlock, IBlockDoc } from '../models';
-import { create, fetch } from '../services';
+import { IBlock, IBlockDoc } from '../models/Block';
+import { create, fetch } from '../services/dbService';
 
 
 type Blocks = {

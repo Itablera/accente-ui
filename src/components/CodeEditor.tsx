@@ -16,7 +16,7 @@ export const CodeEditor: React.FC = () => {
 
     try {
       const compiledCode = transpile(code);
-      //@ts-ignore
+      //@ts-expect-error - iframe.contentWindow.eval is not a function
       iframe.contentWindow?.eval(compiledCode);
     } catch (error) {
       console.error("Error executing code:", error);

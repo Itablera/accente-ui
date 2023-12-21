@@ -1,4 +1,4 @@
-import { IDoc } from "./";
+import { IDoc } from "./DB";
 
 export interface IBlock {
     title: string;

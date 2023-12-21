@@ -1,7 +1,7 @@
 // pages/ListBlocksPage.tsx
 import React, {  } from 'react';
 import { Link } from 'react-router-dom';
-import { useBlocks } from '../hooks';
+import { useBlocks } from '../hooks/Blocks';
 
 export const ListBlocksPage: React.FC = () => {
     const { blocks, addBlock } = useBlocks();

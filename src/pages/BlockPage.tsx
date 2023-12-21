@@ -1,8 +1,8 @@
 // BlockPage.tsx
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import { useBlock } from '../hooks';
-import { Block } from '../components';
+import { useBlock } from '../hooks/Block';
+import { Block } from '../components/Block';
 
 export const BlockPage: React.FC = () => {
     const { id = '' } = useParams<{ id: string }>();
