@@ -13,15 +13,16 @@
     "@mdxeditor/editor": "^1.13.5",
     "@monaco-editor/react": "^4.6.0",
     "@tanstack/react-query": "^5.14.1",
+    "events": "^3.3.0",
     "lodash": "^4.17.21",
-    "pouchdb": "^8.0.1",
+    "pouchdb-browser": "^8.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.21.0"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.202",
-    "@types/pouchdb": "^6.4.2",
+    "@types/pouchdb-browser": "^6.1.5",
     "@types/react": "^18.2.43",
     "@types/react-dom": "^18.2.17",
     "@typescript-eslint/eslint-plugin": "^6.14.0",

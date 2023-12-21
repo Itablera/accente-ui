@@ -1,4 +1,4 @@
-import PouchDB from 'pouchdb';
+import PouchDB from 'pouchdb-browser';
 import { IBlockDoc } from '../models/Block';
 import { IFieldDefinitionDoc } from '../models/FieldDefinition';
 
@@ -30,6 +30,7 @@ export const create = async <T>(collection: CollectionType, newData: Partial<T>)
 
 export const update = async <T extends IFieldDefinitionDoc | IBlockDoc>(collection: CollectionType, id: string, updatedData: Partial<T>): Promise<T> => {
     const db = getDB(collection);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { _id: userProvidedId, _rev: userProvidedRev, ...properties } = updatedData;
     try {
         const doc = await db.get(id);
@@ -50,5 +51,5 @@ export const update = async <T extends IFieldDefinitionDoc | IBlockDoc>(collecti
 export const remove = async (collection: CollectionType, id: string): Promise<void> => {
     const db = getDB(collection);
     const doc = await db.get(id);
-    const updateResult = await db.remove(doc);
+    await db.remove(doc);
 };
