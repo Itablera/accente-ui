@@ -5,7 +5,7 @@ export const ALL_PLUGINS = [
   //toolbarPlugin({ toolbarContents: () => <KitchenSinkToolbar /> }), //Gets error about missing plugin or label viewMode
   listsPlugin(),
   quotePlugin(),
-  headingsPlugin(),
+  headingsPlugin({allowedHeadingLevels: [1, 2, 3, 4, 5, 6]}),
   linkPlugin(),
   linkDialogPlugin(),
   imagePlugin(),
