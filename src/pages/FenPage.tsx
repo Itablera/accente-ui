@@ -3,9 +3,10 @@ import type { MDXEditorMethods } from '@mdxeditor/editor';
 import MdxFen from '../components/MdxFen';
 
 const defaultSnippetContent = `
+
 # Hello world!
-Check the EditorComponent.tsx file for the code .
-Hello [world](https://virtuoso.dev/)
+
+{2*2}
 
 ## Table
 

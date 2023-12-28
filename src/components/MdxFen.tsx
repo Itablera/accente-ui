@@ -221,10 +221,11 @@ const CalloutDirectiveDescriptor: DirectiveDescriptor = {
 const InsertMyLeaf = () => {
     const insertJsx = jsxPluginHooks.usePublisher('insertJsx')
     return (
+        <>
       <Button
         onClick={() =>
           insertJsx({
-            name: 'Marker',
+            name: 'MyLeaf',
             kind: 'text',
             props: { foo: 'bar', bar: 'baz' }
           })
@@ -232,6 +233,18 @@ const InsertMyLeaf = () => {
       >
         Leaf
       </Button>
+      <Button
+        onClick={() =>
+          insertJsx({
+            name: 'BlockNode',
+            kind: 'flow',
+            props: { foo: 'bar', bar: 'baz' }
+          })
+        }
+      >
+        Flow
+      </Button>
+      </>
     )
   }
 
