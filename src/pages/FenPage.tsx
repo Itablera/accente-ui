@@ -1,13 +1,11 @@
 import { Suspense, useRef, useState } from 'react';
-import type { MDXEditorMethods } from '@mdxeditor/editor';
+import {MDXEditorMethods} from '@mdxeditor/editor';
 import MdxFen from '../components/MdxFen';
 
-const defaultSnippetContent = `
+const defaultSnippetContent_org = `
 
 # Hello world!
-
 {2*2}
-
 ## Table
 
 | Tables        | Are           | Cool  |
@@ -20,6 +18,12 @@ const defaultSnippetContent = `
 Image with dimensions:
 
 <img src="https://images.unsplash.com/photo-1517935706615-2717063c2225" width="500" height="auto" />
+`;
+
+const defaultSnippetContent = `
+import { MyLeaf } from './external'
+
+<MyLeaf foo="bar" bar="baz">test</MyLeaf>
 `;
 
 export default function FenPage() {

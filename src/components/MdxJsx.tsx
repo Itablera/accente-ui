@@ -51,7 +51,6 @@ const jsxComponentDescriptors: JsxComponentDescriptor[] = [
     }
   }
 ]
-
 const InsertCard = () => {
   const insertJsx = jsxPluginHooks.usePublisher('insertJsx')
   return (

@@ -244,6 +244,17 @@ const InsertMyLeaf = () => {
       >
         Flow
       </Button>
+      <Button
+        onClick={() =>
+          insertJsx({
+            name: 'Marker',
+            kind: 'text',
+            props: { name: 'bar' }
+          })
+        }
+      >
+        Marker
+      </Button>
       </>
     )
   }

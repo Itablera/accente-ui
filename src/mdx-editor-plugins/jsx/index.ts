@@ -2,13 +2,13 @@ import { mdxFromMarkdown, mdxToMarkdown } from 'mdast-util-mdx'
 import type { MdxJsxFlowElement, MdxJsxTextElement } from 'mdast-util-mdx-jsx'
 import { mdxjs } from 'micromark-extension-mdxjs'
 import React from 'react'
-//import { realmPlugin, system } from '../../gurx'
+import { Content, Parent, Root } from 'mdast'
+//import { realmPlugin, system } from '../gurx'
 //import { coreSystem } from '../core'
 import { $createLexicalJsxNode, LexicalJsxNode } from './LexicalJsxNode'
 import { LexicalJsxVisitor } from './LexicalJsxVisitor'
 import { MdastMdxJsEsmVisitor } from './MdastMdxJsEsmVisitor'
 import { MdastMdxJsxElementVisitor } from './MdastMdxJsxElementVisitor'
-import * as Mdast from 'mdast'
 import { coreSystem, realmPlugin, system } from '@mdxeditor/editor'
 
 /**
@@ -95,8 +95,8 @@ type JsxFlowPayload = {
 
 type InsertJsxPayload = JsxTextPayload | JsxFlowPayload
 
-export function isMdastJsxNode(node: Mdast.Content): node is MdxJsxFlowElement {
-  return node.type === 'mdxJsxFlowElement'
+export function isMdastJsxNode(node: Content | Parent | Root): node is MdastJsx {
+  return node.type === 'mdxJsxFlowElement' || node.type === 'mdxJsxTextElement'
 }
 
 function toMdastJsxAttributes(attributes: Record<string, string>): MdastJsx['attributes'] {
@@ -157,6 +157,23 @@ export interface JsxPluginParams {
   jsxComponentDescriptors: JsxComponentDescriptor[]
 }
 
+
+const convert = (discriptors: import("/Users/perlinde/repositories/accente-ui/src/mdx-editor-plugins/jsx/index").JsxComponentDescriptor[]): import("/Users/perlinde/repositories/accente-ui/node_modules/@mdxeditor/editor/dist/plugins/jsx/index").JsxComponentDescriptor[] => { 
+  const converted: import("/Users/perlinde/repositories/accente-ui/node_modules/@mdxeditor/editor/dist/plugins/jsx/index").JsxComponentDescriptor[] = discriptors.map((descriptor) => {
+    return {
+      name: descriptor.name,
+      kind: descriptor.kind,
+      source: descriptor.source,
+      defaultExport: descriptor.defaultExport,
+      props: descriptor.props,
+      hasChildren: descriptor.hasChildren,
+      Editor: descriptor.Editor as React.ComponentType<import("/Users/perlinde/repositories/accente-ui/node_modules/@mdxeditor/editor/dist/plugins/jsx/index").JsxEditorProps>
+    }
+  });
+
+  return converted;
+}
+
 export const [
   /** @internal */
   jsxPlugin,
@@ -166,7 +183,7 @@ export const [
   id: 'jsx',
   systemSpec: jsxSystem,
   applyParamsToSystem: (realm, params: JsxPluginParams) => {
-    realm.pubKey('jsxComponentDescriptors', params?.jsxComponentDescriptors || [])
+    realm.pubKey('jsxComponentDescriptors', convert(params?.jsxComponentDescriptors) || [])
   },
 
   init: (realm, _: JsxPluginParams) => {
