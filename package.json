@@ -36,24 +36,5 @@
     "eslint-plugin-react-refresh": "^0.4.5",
     "typescript": "^5.2.2",
     "vite": "^5.0.8"
-  },
-  "resolutions": {
-    "mdast-util-directive": "3.0.0",
-    "mdast-util-from-markdown": "^2.0.0",
-    "mdast-util-frontmatter": "2.0.1",
-    "mdast-util-gfm-table": "^2.0.0",
-    "mdast-util-gfm-task-list-item": "2.0.0",
-    "mdast-util-mdx": "3.0.0",
-    "mdast-util-mdx-jsx": "^3.0.0",
-    "mdast-util-to-hast": "^13.0.2",
-    "mdast-util-to-markdown": "2.1.0",
-    "micromark-extension-directive": "3.0.0",
-    "micromark-extension-frontmatter": "2.0.0",
-    "micromark-extension-gfm-table": "^2.0.0",
-    "micromark-extension-gfm-task-list-item": "2.0.1",
-    "micromark-extension-mdx-jsx": "^3.0.0",
-    "micromark-extension-mdxjs": "3.0.0",
-    "micromark-util-types": "^2.0.0",
-    "@types/mdast": "4.0.3"
   }
 }

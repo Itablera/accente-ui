@@ -23,7 +23,7 @@ Image with dimensions:
 const defaultSnippetContent = `
 import { MyLeaf } from './external'
 
-<MyLeaf foo="bar" bar="baz">test</MyLeaf>
+<MyLeaf foo="bar" bar="baz">{2*2}</MyLeaf>
 `;
 
 export default function FenPage() {

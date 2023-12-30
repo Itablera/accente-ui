@@ -1,4 +1,4 @@
-import { Button, GenericJsxEditor, JsxComponentDescriptor, MDXEditor, NestedLexicalEditor, jsxPlugin, jsxPluginHooks, toolbarPlugin } from "@mdxeditor/editor"
+import { Button, DiffSourceToggleWrapper, GenericJsxEditor, JsxComponentDescriptor, MDXEditor, NestedLexicalEditor, diffSourcePlugin, jsxPlugin, jsxPluginHooks, toolbarPlugin } from "@mdxeditor/editor"
 
 const jsxComponentDescriptors: JsxComponentDescriptor[] = [
     {
@@ -89,12 +89,16 @@ const jsxComponentDescriptors: JsxComponentDescriptor[] = [
         onChange={console.log}
         plugins={[
           jsxPlugin({ jsxComponentDescriptors }),
+          diffSourcePlugin({ diffMarkdown: 'An older version', viewMode: 'rich-text' }),
           toolbarPlugin({
             toolbarContents: () => (
               <>
-                <InsertMyLeaf />
-                <InsertMyLeaf2 />
+                <DiffSourceToggleWrapper>
+                  <InsertMyLeaf />
+                  <InsertMyLeaf2 />
+                </DiffSourceToggleWrapper>
               </>
+              
             )
           })
         ]}
