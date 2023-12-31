@@ -1,4 +1,11 @@
-import { Button, DiffSourceToggleWrapper, GenericJsxEditor, JsxComponentDescriptor, MDXEditor, NestedLexicalEditor, diffSourcePlugin, jsxPlugin, jsxPluginHooks, toolbarPlugin } from "@mdxeditor/editor"
+import { Button, DialogButton, DiffSourceToggleWrapper, DirectiveDescriptor, GenericDirectiveEditor, GenericJsxEditor, JsxComponentDescriptor, MDXEditor, NestedLexicalEditor, diffSourcePlugin, directivesPlugin, directivesPluginHooks, jsxPlugin, jsxPluginHooks, toolbarPlugin } from "@mdxeditor/editor"
+import { ContainerDirective, LeafDirective } from 'mdast-util-directive'
+
+const markdown = `
+:::callout
+you better watch out!
+:::
+`
 
 const jsxComponentDescriptors: JsxComponentDescriptor[] = [
     {
@@ -81,21 +88,89 @@ const jsxComponentDescriptors: JsxComponentDescriptor[] = [
       </Button>
     )
   }
+
+  const CalloutDirectiveDescriptor: DirectiveDescriptor = {
+    name: 'callout',
+    testNode(node) {
+      return node.name === 'callout'
+    },
+    // set some attribute names to have the editor display a property editor popup.
+    attributes: [],
+    // used by the generic editor to determine whether or not to render a nested editor.
+    hasChildren: true,
+    Editor: GenericDirectiveEditor
+  }
+
+  const YoutubeDirectiveDescriptor: DirectiveDescriptor = {
+    name: 'youtube',
+    testNode(node) {
+      return node.name === 'youtube'
+    },
+    attributes: [],
+    hasChildren: true,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    Editor: (props) => {
+      return (
+        <div style={{ border: '1px solid red', padding: 8, margin: 8 }}>
+          <NestedLexicalEditor<ContainerDirective>
+            block
+            getContent={(node) => node.children}
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            getUpdatedMdastNode={(mdastNode, children: any) => {
+              return { ...mdastNode, children }
+            }}
+          />
+        </div>
+      )
+    }
+  }
+
+  const YouTubeButton = () => {
+    // grab the insertDirective action (a.k.a. publisher) from the 
+    // state management system of the directivesPlugin
+    const insertDirective = directivesPluginHooks.usePublisher('insertDirective')
+  
+    return (
+      <DialogButton
+        tooltipTitle="Insert Youtube video"
+        submitButtonTitle="Insert video"
+        dialogInputPlaceholder="Paste the youtube video URL"
+        buttonContent="YT"
+        onSubmit={(url) => {
+          const videoId = new URL(url).searchParams.get('v')
+          if (videoId) {
+            insertDirective({
+              name: 'youtube',
+              type: 'leafDirective',
+              attributes: { id: videoId },
+              children: []
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            } as LeafDirective)
+          } else {
+            alert('Invalid YouTube URL')
+          }
+        }}
+      />
+    )
+  }
+  
   
   export const MdxLab = () => {
     return (
       <MDXEditor
-        markdown={'jsxMarkdown'} // the contents of the file  below
+        markdown={markdown} // the contents of the file  below
         onChange={console.log}
         plugins={[
           jsxPlugin({ jsxComponentDescriptors }),
           diffSourcePlugin({ diffMarkdown: 'An older version', viewMode: 'rich-text' }),
+          directivesPlugin({ directiveDescriptors: [CalloutDirectiveDescriptor, YoutubeDirectiveDescriptor] }),
           toolbarPlugin({
             toolbarContents: () => (
               <>
                 <DiffSourceToggleWrapper>
                   <InsertMyLeaf />
                   <InsertMyLeaf2 />
+                  <YouTubeButton />
                 </DiffSourceToggleWrapper>
               </>
               
