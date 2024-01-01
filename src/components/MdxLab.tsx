@@ -1,10 +1,13 @@
 import { Button, DialogButton, DiffSourceToggleWrapper, DirectiveDescriptor, GenericDirectiveEditor, GenericJsxEditor, JsxComponentDescriptor, MDXEditor, NestedLexicalEditor, diffSourcePlugin, directivesPlugin, directivesPluginHooks, jsxPlugin, jsxPluginHooks, toolbarPlugin } from "@mdxeditor/editor"
 import { ContainerDirective, LeafDirective } from 'mdast-util-directive'
+import { jsxEvaluatePlugin } from "../mdx-editor-plugins/evaluate-jsx"
 
 const markdown = `
-:::callout
-you better watch out!
-:::
+import { MyLeaf } from './external'
+
+<MyLeaf foo="bar" bar="baz">
+  {2*2}
+</MyLeaf>
 `
 
 const jsxComponentDescriptors: JsxComponentDescriptor[] = [
@@ -162,6 +165,7 @@ const jsxComponentDescriptors: JsxComponentDescriptor[] = [
         onChange={console.log}
         plugins={[
           jsxPlugin({ jsxComponentDescriptors }),
+          jsxEvaluatePlugin(),
           diffSourcePlugin({ diffMarkdown: 'An older version', viewMode: 'rich-text' }),
           directivesPlugin({ directiveDescriptors: [CalloutDirectiveDescriptor, YoutubeDirectiveDescriptor] }),
           toolbarPlugin({
