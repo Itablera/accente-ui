@@ -5,8 +5,8 @@ import MDX from './mdx.mdx'
 export const MdxPage: React.FC = () => {
 
     return (
-        <div>
-            <MDX />
+        <div className='prose prose-stone prose-invert'>
+            <MDX class='prose' />
         </div>
     );
 };

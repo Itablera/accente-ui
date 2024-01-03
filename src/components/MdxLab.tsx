@@ -167,7 +167,7 @@ const jsxComponentDescriptors: JsxComponentDescriptor[] = [
   export const MdxLab = () => {
     return (
       <MDXEditor
-        className="dark-theme dark-editor"
+        className="dark-theme dark-editor prose prose-invert"
         markdown={markdown} // the contents of the file  below
         onChange={console.log}
         plugins={[
