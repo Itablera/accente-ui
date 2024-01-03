@@ -11,41 +11,44 @@ import { SlashView, slash } from './MilkdownSlash';
 import { BlockView } from './MilkdownBlock';    
 
 import '@milkdown/theme-nord/style.css';
+import './milkdown.css';
 
-const defaultValue = `
-# Title
+const markdown =
+`# Milkdown React Slash
 
-- list1
-- list2
-- list3
+> You're scared of a world where you're needed.
 
-> quote
 
-\`\`\`typescript
-const a = 1;
-\`\`\`
-`;
 
-const MilkdownEditor: React.FC = () => {
+- item 1
+- item 2
+- item 3q
+
+This is a demo for using Milkdown with **React**.
+
+Type \`/\` to see the slash command.`
+
+export const MilkdownEditor: React.FC = () => {
     const pluginViewFactory = usePluginViewFactory();
     
     useEditor((root) => {
-      return Editor.make()
-        .config(nord)
-        .config((ctx) => {
-            ctx.set(rootCtx, root)
-            ctx.set(defaultValueCtx, defaultValue)
-            ctx.set(slash.key, {
-              view: pluginViewFactory({
-                component: SlashView,
-              })
+      return Editor
+        .make()
+        .config(ctx => {
+          ctx.set(rootCtx, root)
+          ctx.set(defaultValueCtx, markdown)
+          ctx.set(slash.key, {
+            view: pluginViewFactory({
+              component: SlashView,
             })
-            ctx.set(block.key, {
-              view: pluginViewFactory({
+          })
+          ctx.set(block.key, {
+            view: pluginViewFactory({
               component: BlockView,
-              })
             })
+          })
         })
+        .config(nord)
         .use(commonmark)
         .use(slash)
         .use(block)

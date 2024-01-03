@@ -1,4 +1,4 @@
-import { Button, DialogButton, DiffSourceToggleWrapper, DirectiveDescriptor, GenericDirectiveEditor, GenericJsxEditor, JsxComponentDescriptor, MDXEditor, NestedLexicalEditor, diffSourcePlugin, directivesPlugin, directivesPluginHooks, jsxPlugin, jsxPluginHooks, toolbarPlugin } from "@mdxeditor/editor"
+import { Button, DialogButton, DiffSourceToggleWrapper, DirectiveDescriptor, GenericDirectiveEditor, GenericJsxEditor, JsxComponentDescriptor, MDXEditor, NestedLexicalEditor, diffSourcePlugin, directivesPlugin, directivesPluginHooks, headingsPlugin, imagePlugin, jsxPlugin, jsxPluginHooks, linkDialogPlugin, linkPlugin, listsPlugin, markdownShortcutPlugin, quotePlugin, toolbarPlugin } from "@mdxeditor/editor"
 import { ContainerDirective, LeafDirective } from 'mdast-util-directive'
 import { jsxEvaluatePlugin } from "../mdx-editor-plugins/evaluate-jsx"
 
@@ -8,6 +8,12 @@ import { MyLeaf } from './external'
 <MyLeaf foo="bar" bar="baz">
   {2*2}
 </MyLeaf>
+
+> This is a quote
+
+- list item 1
+- list item 2
+
 `
 
 const jsxComponentDescriptors: JsxComponentDescriptor[] = [
@@ -161,9 +167,16 @@ const jsxComponentDescriptors: JsxComponentDescriptor[] = [
   export const MdxLab = () => {
     return (
       <MDXEditor
+        className="dark-theme dark-editor"
         markdown={markdown} // the contents of the file  below
         onChange={console.log}
         plugins={[
+          quotePlugin(),
+          listsPlugin(),
+          headingsPlugin(),
+          linkPlugin(),
+          linkDialogPlugin(),
+          imagePlugin(),
           jsxPlugin({ jsxComponentDescriptors }),
           jsxEvaluatePlugin(),
           diffSourcePlugin({ diffMarkdown: 'An older version', viewMode: 'rich-text' }),
@@ -179,7 +192,8 @@ const jsxComponentDescriptors: JsxComponentDescriptor[] = [
               </>
               
             )
-          })
+          }),
+          markdownShortcutPlugin()
         ]}
       />
     )

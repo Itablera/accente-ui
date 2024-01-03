@@ -28,6 +28,7 @@ export const SlashView = () => {
         slashProvider.current = new SlashProvider({
             content: div,
             tippyOptions: {
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 onMount: (_) => {
                     (ref.current?.children[0] as HTMLButtonElement).focus();
                 }
