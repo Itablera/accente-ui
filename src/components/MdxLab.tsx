@@ -1,6 +1,7 @@
 import { Button, DialogButton, DiffSourceToggleWrapper, DirectiveDescriptor, GenericDirectiveEditor, GenericJsxEditor, JsxComponentDescriptor, MDXEditor, NestedLexicalEditor, diffSourcePlugin, directivesPlugin, directivesPluginHooks, headingsPlugin, imagePlugin, jsxPlugin, jsxPluginHooks, linkDialogPlugin, linkPlugin, listsPlugin, markdownShortcutPlugin, quotePlugin, toolbarPlugin } from "@mdxeditor/editor"
 import { LeafDirective, ContainerDirective } from 'mdast-util-directive'
 import { MdxJsxTextElement, MdxJsxFlowElement } from 'mdast-util-mdx-jsx'
+import { Blockquote } from 'mdast'
 import { jsxEvaluatePlugin } from "../mdx-editor-plugins/evaluate-jsx"
 
 const markdown = `
