@@ -1,5 +1,6 @@
 import { Button, DialogButton, DiffSourceToggleWrapper, DirectiveDescriptor, GenericDirectiveEditor, GenericJsxEditor, JsxComponentDescriptor, MDXEditor, NestedLexicalEditor, diffSourcePlugin, directivesPlugin, directivesPluginHooks, headingsPlugin, imagePlugin, jsxPlugin, jsxPluginHooks, linkDialogPlugin, linkPlugin, listsPlugin, markdownShortcutPlugin, quotePlugin, toolbarPlugin } from "@mdxeditor/editor"
-import { ContainerDirective, LeafDirective } from 'mdast-util-directive'
+import { LeafDirective, ContainerDirective } from 'mdast-util-directive'
+import { MdxJsxTextElement, MdxJsxFlowElement } from 'mdast-util-mdx-jsx'
 import { jsxEvaluatePlugin } from "../mdx-editor-plugins/evaluate-jsx"
 
 const markdown = `
@@ -17,6 +18,18 @@ import { MyLeaf } from './external'
 `
 
 const jsxComponentDescriptors: JsxComponentDescriptor[] = [
+    {
+      name: 'Card',
+      kind: 'text',
+      source: './external',
+      props: [
+        { name: 'foo', type: 'string' },
+      ],
+      hasChildren: true,
+      Editor: (props) => {
+        return <button>foo: {props.mdastNode.attributes[0].value?.toString()} value: {props?.mdastNode?.children[0]?.type === 'text' && props.mdastNode.children[0].value}</button>
+      }
+    },        
     {
       name: 'MyLeaf',
       kind: 'text', // 'text' for inline, 'flow' for block
@@ -40,13 +53,30 @@ const jsxComponentDescriptors: JsxComponentDescriptor[] = [
       hasChildren: false,
       Editor: () => {
         return (
-          <div style={{ border: '1px solid red', padding: 8, margin: 8, display: 'inline-block' }}>
-            <NestedLexicalEditor
-            //@ts-expect-error - children is not a prop of NestedLexicalEditor
-              getContent={(node) => node.children}
+          <div style={{ border: '1px solid red' }}>
+            <NestedLexicalEditor<MdxJsxTextElement | MdxJsxFlowElement>
+              block
+              getContent={(node) => {
+                const manipulated = node.children.map((child) => {
+                  if (child.type === 'paragraph') {
+                    const newChild: Blockquote = {
+                      type: 'blockquote',
+                      children: [{ type: 'paragraph', children: [{ type: 'text', value: child.children[0].value }] }]
+                    }
+                    return newChild
+                  } else {
+                    return child
+                  }
+                })
+                return manipulated
+              }}
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
               getUpdatedMdastNode={(mdastNode, children: any) => {
-                return { ...mdastNode, children }
+                return {
+                  ...mdastNode,
+                  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                  children
+                }
               }}
             />
           </div>
@@ -64,6 +94,23 @@ const jsxComponentDescriptors: JsxComponentDescriptor[] = [
   ]
   
   // a toolbar button that will insert a JSX element into the editor.
+  const InsertCard = () => {
+    const insertJsx = jsxPluginHooks.usePublisher('insertJsx')
+    return (
+      <Button
+        onClick={() =>
+          insertJsx({
+            name: 'Card',
+            kind: 'text',
+            props: { foo: 'bar' }
+          })
+        }
+      >
+        Card
+      </Button>
+    )
+  }
+
   const InsertMyLeaf = () => {
     const insertJsx = jsxPluginHooks.usePublisher('insertJsx')
     return (
@@ -188,6 +235,7 @@ const jsxComponentDescriptors: JsxComponentDescriptor[] = [
                   <InsertMyLeaf />
                   <InsertMyLeaf2 />
                   <YouTubeButton />
+                  <InsertCard />
                 </DiffSourceToggleWrapper>
               </>
               
