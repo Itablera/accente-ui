@@ -3,19 +3,22 @@ import { LeafDirective, ContainerDirective } from 'mdast-util-directive'
 import { MdxJsxTextElement, MdxJsxFlowElement } from 'mdast-util-mdx-jsx'
 import { Blockquote } from 'mdast'
 import { jsxEvaluatePlugin } from "../mdx-editor-plugins/evaluate-jsx"
+import { CardTest, MdxCard } from "./MdxCard"
+
+const markdown1 = `
+import { CustomTextEditor } from './external'
+
+<CustomTextEditor foo="bar" bar="baz">
+  {2*2}
+</CustomTextEditor>
+`
 
 const markdown = `
-import { MyLeaf } from './external'
+import { Card } from './external'
 
-<MyLeaf foo="bar" bar="baz">
+<Card foo="bar">
   {2*2}
-</MyLeaf>
-
-> This is a quote
-
-- list item 1
-- list item 2
-
+</Card>
 `
 
 const jsxComponentDescriptors: JsxComponentDescriptor[] = [
@@ -27,12 +30,23 @@ const jsxComponentDescriptors: JsxComponentDescriptor[] = [
         { name: 'foo', type: 'string' },
       ],
       hasChildren: true,
-      Editor: (props) => {
-        return <button>foo: {props.mdastNode.attributes[0].value?.toString()} value: {props?.mdastNode?.children[0]?.type === 'text' && props.mdastNode.children[0].value}</button>
+      Editor: () => {
+        return (
+          <div style={{ border: '1px solid red', padding: 8, margin: 8 }}>
+            <NestedLexicalEditor<ContainerDirective>
+              block = {false}
+              getContent={(node) => node.children}
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              getUpdatedMdastNode={(mdastNode, children: any) => {
+                return { ...mdastNode, children }
+              }}
+            />
+          </div>
+        )
       }
     },        
     {
-      name: 'MyLeaf',
+      name: 'TextEditor',
       kind: 'text', // 'text' for inline, 'flow' for block
       // the source field is used to construct the import statement at the top of the markdown document. 
       // it won't be actually sourced.
@@ -47,16 +61,19 @@ const jsxComponentDescriptors: JsxComponentDescriptor[] = [
       Editor: GenericJsxEditor
     },
     {
-      name: 'Marker',
+      name: 'CustomTextEditor',
       kind: 'text',
       source: './external',
-      props: [{ name: 'type', type: 'string' }],
+      props: [
+        { name: 'foo', type: 'string' },
+        { name: 'bar', type: 'string' }
+      ],
       hasChildren: false,
       Editor: () => {
         return (
           <div style={{ border: '1px solid red' }}>
             <NestedLexicalEditor<MdxJsxTextElement | MdxJsxFlowElement>
-              block
+              block={false}
               getContent={(node) => {
                 const manipulated = node.children.map((child) => {
                   if (child.type === 'paragraph') {
@@ -112,36 +129,53 @@ const jsxComponentDescriptors: JsxComponentDescriptor[] = [
     )
   }
 
-  const InsertMyLeaf = () => {
+  const InsertTextEditor = () => {
     const insertJsx = jsxPluginHooks.usePublisher('insertJsx')
     return (
       <Button
         onClick={() =>
           insertJsx({
-            name: 'MyLeaf',
+            name: 'TextEditor',
             kind: 'text',
             props: { foo: 'bar', bar: 'baz' }
           })
         }
       >
-        Leaf
+        InsertTextEditor
       </Button>
     )
   }
 
-  const InsertMyLeaf2 = () => {
+  const InsertCustomEditor = () => {
     const insertJsx = jsxPluginHooks.usePublisher('insertJsx')
     return (
       <Button
         onClick={() =>
           insertJsx({
-            name: 'MyLeaf',
+            name: 'CustomTextEditor',
             kind: 'text',
             props: { foo: 'bar', bar: 'baz' }
           })
         }
       >
-        Other
+        InsertCustomEditor
+      </Button>
+    )
+  }
+
+  const InsertBlockEditor = () => {
+    const insertJsx = jsxPluginHooks.usePublisher('insertJsx')
+    return (
+      <Button
+        onClick={() =>
+          insertJsx({
+            name: 'BlockNode',
+            kind: 'flow',
+            props: { }
+          })
+        }
+      >
+        InsertBlockEditor
       </Button>
     )
   }
@@ -233,10 +267,11 @@ const jsxComponentDescriptors: JsxComponentDescriptor[] = [
             toolbarContents: () => (
               <>
                 <DiffSourceToggleWrapper>
-                  <InsertMyLeaf />
-                  <InsertMyLeaf2 />
+                  <InsertTextEditor />
+                  <InsertCustomEditor />
                   <YouTubeButton />
                   <InsertCard />
+                  <InsertBlockEditor />
                 </DiffSourceToggleWrapper>
               </>
               
