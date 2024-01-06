@@ -12,7 +12,7 @@
   "dependencies": {
     "@mdx-js/react": "^3.0.0",
     "@mdx-js/rollup": "^3.0.0",
-    "@mdxeditor/editor": "^1.14.3",
+    "@mdxeditor/editor": "^2.1.0",
     "@milkdown/core": "^7.3.3",
     "@milkdown/ctx": "^7.3.3",
     "@milkdown/plugin-block": "^7.3.3",

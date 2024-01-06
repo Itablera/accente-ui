@@ -1,4 +1,4 @@
-import { jsxSystem, realmPlugin } from '@mdxeditor/editor'
+import { addImportVisitor$, realmPlugin } from '@mdxeditor/editor'
 import { MdastMdxJsxExpressionVisitor } from './MdastMdxJsxExpressionVisitor'
 
 /**
@@ -7,21 +7,8 @@ import { MdastMdxJsxExpressionVisitor } from './MdastMdxJsxExpressionVisitor'
 export interface JsxPluginParams {
 }
 
-export const [
-  /** @internal */
-  jsxEvaluatePlugin,
-  /** @internal */
-  jsxEvaluatePluginHooks
-] = realmPlugin({
-  id: 'evaluate-jsx',
-  dependencies: ['jsx'],
-  systemSpec: jsxSystem,
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  init: (realm, _: JsxPluginParams) => {
-    // import
-    realm.pubKey('addImportVisitor', MdastMdxJsxExpressionVisitor)
-
-    // export
+export const jsxEvaluatePlugin = realmPlugin({
+  init: (realm) => {
+    realm.pub(addImportVisitor$, MdastMdxJsxExpressionVisitor)
   }
 })

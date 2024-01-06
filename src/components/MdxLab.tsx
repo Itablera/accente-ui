@@ -1,9 +1,11 @@
-import { Button, DialogButton, DiffSourceToggleWrapper, DirectiveDescriptor, GenericDirectiveEditor, GenericJsxEditor, JsxComponentDescriptor, MDXEditor, NestedLexicalEditor, diffSourcePlugin, directivesPlugin, directivesPluginHooks, headingsPlugin, imagePlugin, jsxPlugin, jsxPluginHooks, linkDialogPlugin, linkPlugin, listsPlugin, markdownShortcutPlugin, quotePlugin, toolbarPlugin } from "@mdxeditor/editor"
+import { $createCodeBlockNode, $createImageNode, Button, CreateImageNodeParameters, DialogButton, DiffSourceToggleWrapper, DirectiveDescriptor, GenericDirectiveEditor, GenericJsxEditor, JsxComponentDescriptor, MDXEditor, NestedLexicalEditor, currentSelection$, diffSourcePlugin, directivesPlugin, editorInFocus$, headingsPlugin, imagePlugin, insertDirective$, insertJsx$, jsxPlugin, linkDialogPlugin, linkPlugin, listsPlugin, markdown$, markdownShortcutPlugin, quotePlugin, rootEditor$, toolbarPlugin, useCellValues, usePublisher } from "@mdxeditor/editor"
 import { LeafDirective, ContainerDirective } from 'mdast-util-directive'
 import { MdxJsxTextElement, MdxJsxFlowElement } from 'mdast-util-mdx-jsx'
 import { Blockquote } from 'mdast'
 import { jsxEvaluatePlugin } from "../mdx-editor-plugins/evaluate-jsx"
-import { CardTest, MdxCard } from "./MdxCard"
+import { MdxCard } from "./MdxCard"
+import { catchAllPlugin } from "../mdx-editor-plugins/catch-all"
+import { ElementNode } from 'lexical'
 
 const markdown1 = `
 import { CustomTextEditor } from './external'
@@ -13,15 +15,48 @@ import { CustomTextEditor } from './external'
 </CustomTextEditor>
 `
 
-const markdown = `
+const markdown2 = `
 import { Card } from './external'
 
 <Card foo="bar">
-  {2*2}
+  foo
 </Card>
 `
 
+const markdown = `
+asd
+`
+
 const jsxComponentDescriptors: JsxComponentDescriptor[] = [
+    {
+      name: 'List',
+      kind: 'text',
+      source: './external',
+      props: [
+        { name: 'foo', type: 'string' },
+      ],
+      hasChildren: true,
+      Editor: () => {
+        const list = [
+          'foo',
+          'bar',
+          'baz'
+        ];
+        const [markdown, rootEditor, editorInFocus] = useCellValues(markdown$, rootEditor$, editorInFocus$, currentSelection$)
+        const payload: CreateImageNodeParameters = {
+          src: 'asd',
+          altText: 'asd'
+        }
+        ;(rootEditor as unknown as ElementNode).append($createImageNode(payload))
+        return (
+          <ul>
+            {list.map((item) => (
+              <li>{item}</li>
+            ))}
+          </ul>
+        )
+      }
+    },
     {
       name: 'Card',
       kind: 'text',
@@ -30,20 +65,7 @@ const jsxComponentDescriptors: JsxComponentDescriptor[] = [
         { name: 'foo', type: 'string' },
       ],
       hasChildren: true,
-      Editor: () => {
-        return (
-          <div style={{ border: '1px solid red', padding: 8, margin: 8 }}>
-            <NestedLexicalEditor<ContainerDirective>
-              block = {false}
-              getContent={(node) => node.children}
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              getUpdatedMdastNode={(mdastNode, children: any) => {
-                return { ...mdastNode, children }
-              }}
-            />
-          </div>
-        )
-      }
+      Editor: GenericJsxEditor
     },        
     {
       name: 'TextEditor',
@@ -113,7 +135,7 @@ const jsxComponentDescriptors: JsxComponentDescriptor[] = [
   
   // a toolbar button that will insert a JSX element into the editor.
   const InsertCard = () => {
-    const insertJsx = jsxPluginHooks.usePublisher('insertJsx')
+    const insertJsx = usePublisher(insertJsx$)
     return (
       <Button
         onClick={() =>
@@ -130,7 +152,7 @@ const jsxComponentDescriptors: JsxComponentDescriptor[] = [
   }
 
   const InsertTextEditor = () => {
-    const insertJsx = jsxPluginHooks.usePublisher('insertJsx')
+    const insertJsx = usePublisher(insertJsx$)
     return (
       <Button
         onClick={() =>
@@ -147,7 +169,7 @@ const jsxComponentDescriptors: JsxComponentDescriptor[] = [
   }
 
   const InsertCustomEditor = () => {
-    const insertJsx = jsxPluginHooks.usePublisher('insertJsx')
+    const insertJsx = usePublisher(insertJsx$)
     return (
       <Button
         onClick={() =>
@@ -164,7 +186,7 @@ const jsxComponentDescriptors: JsxComponentDescriptor[] = [
   }
 
   const InsertBlockEditor = () => {
-    const insertJsx = jsxPluginHooks.usePublisher('insertJsx')
+    const insertJsx = usePublisher(insertJsx$)
     return (
       <Button
         onClick={() =>
@@ -219,7 +241,7 @@ const jsxComponentDescriptors: JsxComponentDescriptor[] = [
   const YouTubeButton = () => {
     // grab the insertDirective action (a.k.a. publisher) from the 
     // state management system of the directivesPlugin
-    const insertDirective = directivesPluginHooks.usePublisher('insertDirective')
+    const insertDirective = usePublisher(insertDirective$)
   
     return (
       <DialogButton
@@ -250,6 +272,7 @@ const jsxComponentDescriptors: JsxComponentDescriptor[] = [
     return (
       <MDXEditor
         className="dark-theme dark-editor prose prose-invert"
+        contentEditableClassName="dark-theme dark-editor prose prose-invert"
         markdown={markdown} // the contents of the file  below
         onChange={console.log}
         plugins={[
@@ -277,7 +300,8 @@ const jsxComponentDescriptors: JsxComponentDescriptor[] = [
               
             )
           }),
-          markdownShortcutPlugin()
+          markdownShortcutPlugin(),
+          catchAllPlugin()
         ]}
       />
     )

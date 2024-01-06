@@ -1,7 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
-import { JsxEditorProps, PropertyPopover, useMdastNodeUpdater } from '@mdxeditor/editor'
-import { MdxJsxAttribute } from 'mdast-util-mdx-jsx'
+import { JsxEditorProps, NestedLexicalEditor, PropertyPopover, useMdastNodeUpdater, editorInFocus$, rootEditor$, useCellValues, markdown$ } from '@mdxeditor/editor'
+import { MdxJsxAttribute, MdxJsxFlowElement, MdxJsxTextElement  } from 'mdast-util-mdx-jsx'
+import { PhrasingContent, Blockquote } from 'mdast'
+import { ElementNode, $createTextNode, createEditor, LexicalEditor} from 'lexical'
 import React from 'react'
+
+
+interface EditorProps extends JsxEditorProps {
+    parentEditor: LexicalEditor
+}
 
 
 /**
@@ -11,6 +18,7 @@ import React from 'react'
  */
 export const MdxCard: React.FC<JsxEditorProps> = ({ mdastNode, descriptor }) => {
   const updateMdastNode = useMdastNodeUpdater()
+  const [markdown, rootEditor, editorInFocus] = useCellValues(markdown$, rootEditor$, editorInFocus$)
 
   const properties = React.useMemo(() => {
     return descriptor.props.reduce((acc, descriptor) => {
@@ -59,9 +67,18 @@ export const MdxCard: React.FC<JsxEditorProps> = ({ mdastNode, descriptor }) => 
 
       {descriptor.props.length > 0 ? <PropertyPopover properties={properties} title={mdastNode.name || ''} onChange={onChange} /> : null}
       {descriptor.hasChildren ? (
-            <span className="mdxcard">
-                <button>foo: {properties['foo']} value: { mdastNode?.children[0]?.type === 'paragraph' && mdastNode?.children[0].children[0]?.type === 'text' && mdastNode.children[0].children[0].value}</button>
-            </span>
+            <div>
+                <span className="mdxcard">
+                    <button>foo: {properties['foo']} value: { mdastNode?.children[0]?.type === 'paragraph' && mdastNode?.children[0].children[0]?.type === 'text' && mdastNode.children[0].children[0].value}</button>
+                </span>
+                <NestedLexicalEditor<MdxJsxTextElement | MdxJsxFlowElement>
+                    block={descriptor.kind === 'flow'}
+                    getContent={(node) => node.children as PhrasingContent[]}
+                    getUpdatedMdastNode={(mdastNode, children) => {
+                        return { ...mdastNode, children } as any
+                    }}
+                />
+            </div>
       ) : (
         <span className="mdxcard">{mdastNode.name}</span>
       )}
