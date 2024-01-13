@@ -12,6 +12,7 @@ import { BlockView } from './MilkdownBlock';
 
 import '@milkdown/theme-nord/style.css';
 import './milkdown.css';
+import { splitEditing } from '@milkdown-lab/plugin-split-editing';
 
 const markdown =
 `# Milkdown React Slash
@@ -53,6 +54,8 @@ export const MilkdownEditor: React.FC = () => {
         .use(slash)
         .use(block)
         .use(cursor)
+        //@ts-expect-error - splitEditing is not in the official Milkdown API
+        .use(splitEditing)
     }, []);
 
   return <Milkdown />;
