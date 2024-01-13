@@ -1,11 +1,9 @@
-import { $createCodeBlockNode, $createImageNode, Button, CreateImageNodeParameters, DialogButton, DiffSourceToggleWrapper, DirectiveDescriptor, GenericDirectiveEditor, GenericJsxEditor, JsxComponentDescriptor, MDXEditor, NestedLexicalEditor, currentSelection$, diffSourcePlugin, directivesPlugin, editorInFocus$, headingsPlugin, imagePlugin, insertDirective$, insertJsx$, jsxPlugin, linkDialogPlugin, linkPlugin, listsPlugin, markdown$, markdownShortcutPlugin, quotePlugin, rootEditor$, toolbarPlugin, useCellValues, usePublisher } from "@mdxeditor/editor"
+import { insertCodeBlock$, Button, CreateImageNodeParameters, DialogButton, DiffSourceToggleWrapper, DirectiveDescriptor, GenericDirectiveEditor, GenericJsxEditor, JsxComponentDescriptor, MDXEditor, NestedLexicalEditor, currentSelection$, diffSourcePlugin, directivesPlugin, editorInFocus$, headingsPlugin, imagePlugin, insertDirective$, insertJsx$, jsxPlugin, linkDialogPlugin, linkPlugin, listsPlugin, markdown$, markdownShortcutPlugin, quotePlugin, rootEditor$, toolbarPlugin, useCellValues, usePublisher, codeBlockPlugin, codeMirrorPlugin } from "@mdxeditor/editor"
 import { LeafDirective, ContainerDirective } from 'mdast-util-directive'
 import { MdxJsxTextElement, MdxJsxFlowElement } from 'mdast-util-mdx-jsx'
 import { Blockquote } from 'mdast'
 import { jsxEvaluatePlugin } from "../mdx-editor-plugins/evaluate-jsx"
-import { MdxCard } from "./MdxCard"
 import { catchAllPlugin } from "../mdx-editor-plugins/catch-all"
-import { ElementNode } from 'lexical'
 
 const markdown1 = `
 import { CustomTextEditor } from './external'
@@ -21,6 +19,10 @@ import { Card } from './external'
 <Card foo="bar">
   foo
 </Card>
+`
+
+const markdown4 = `
+asd
 `
 
 const markdown = `
@@ -42,12 +44,7 @@ const jsxComponentDescriptors: JsxComponentDescriptor[] = [
           'bar',
           'baz'
         ];
-        const [markdown, rootEditor, editorInFocus] = useCellValues(markdown$, rootEditor$, editorInFocus$, currentSelection$)
-        const payload: CreateImageNodeParameters = {
-          src: 'asd',
-          altText: 'asd'
-        }
-        ;(rootEditor as unknown as ElementNode).append($createImageNode(payload))
+        
         return (
           <ul>
             {list.map((item) => (
@@ -147,6 +144,23 @@ const jsxComponentDescriptors: JsxComponentDescriptor[] = [
         }
       >
         Card
+      </Button>
+    )
+  }
+
+  const InsertList = () => {
+    const insertJsx = usePublisher(insertJsx$)
+    return (
+      <Button
+        onClick={() =>
+          insertJsx({
+            name: 'List',
+            kind: 'text',
+            props: { foo: 'bar'}
+          })
+        }
+      >
+        InsertList
       </Button>
     )
   }
@@ -279,6 +293,8 @@ const jsxComponentDescriptors: JsxComponentDescriptor[] = [
           quotePlugin(),
           listsPlugin(),
           headingsPlugin(),
+          codeBlockPlugin({ defaultCodeBlockLanguage: 'js' }),
+          codeMirrorPlugin({ codeBlockLanguages: { js: 'JavaScript', css: 'CSS', txt: 'text', tsx: 'TypeScript' } }),
           linkPlugin(),
           linkDialogPlugin(),
           imagePlugin(),
@@ -290,11 +306,12 @@ const jsxComponentDescriptors: JsxComponentDescriptor[] = [
             toolbarContents: () => (
               <>
                 <DiffSourceToggleWrapper>
-                  <InsertTextEditor />
-                  <InsertCustomEditor />
-                  <YouTubeButton />
-                  <InsertCard />
-                  <InsertBlockEditor />
+                  <InsertList /><>  </>
+                  <InsertTextEditor /><>  </>
+                  <InsertCustomEditor /><>  </>
+                  <YouTubeButton /><>  </>
+                  <InsertCard /><>  </>
+                  <InsertBlockEditor /><>  </>
                 </DiffSourceToggleWrapper>
               </>
               
