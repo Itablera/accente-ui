@@ -5,6 +5,11 @@ import BlockPage from './pages/BlockPage';
 import EditorLabPage from './pages/EditorLab';
 import MdxPage from './pages/MdxPage';
 import MilkdownLabPage from './pages/MilkdownLab';
+import MdxCompilePage from './pages/MdxCompilePage';
+import RemarkPage from './pages/RemarkPage';
+import RemarkPage2 from './pages/RemarkPage2';
+import RemarkEditor from './pages/RemarkEditor';
+import { ClickPage } from './pages/ClickWrapper';
 
 
 
@@ -22,6 +27,10 @@ function App() {
                   <Route path="/lab" element={<EditorLabPage />} />
                   <Route path="/milkdown" element={<MilkdownLabPage />} />
                   <Route path="/mdx" element={<MdxPage />} />
+                  <Route path="/mdxcompile" element={<MdxCompilePage />} />
+                  <Route path="/remark" element={<RemarkPage />} />
+                  <Route path="/remark2" element={<RemarkPage2   />} />
+                  <Route path="/click" element={<ClickPage />} />
                   {/* Add more routes as needed */}
               </Routes>
           </BrowserRouter>

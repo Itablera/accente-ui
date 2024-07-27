@@ -1,6 +1,6 @@
 import React, { ChangeEvent, useState } from 'react';
 import { IBlockDoc } from '../models/Block';
-import { ChangeCodeMirrorLanguage, ConditionalContents, InsertCodeBlock, InsertSandpack, MDXEditor, SandpackConfig, ShowSandpackInfo, codeBlockPlugin, codeMirrorPlugin, diffSourcePlugin, frontmatterPlugin, headingsPlugin, imagePlugin, linkDialogPlugin, linkPlugin, listsPlugin, markdownShortcutPlugin, quotePlugin, sandpackPlugin, tablePlugin, thematicBreakPlugin, toolbarPlugin } from '@mdxeditor/editor';
+import { ChangeCodeMirrorLanguage, ConditionalContents, DiffSourceToggleWrapper, InsertCodeBlock, InsertSandpack, MDXEditor, SandpackConfig, ShowSandpackInfo, codeBlockPlugin, codeMirrorPlugin, diffSourcePlugin, frontmatterPlugin, headingsPlugin, imagePlugin, linkDialogPlugin, linkPlugin, listsPlugin, markdownShortcutPlugin, quotePlugin, sandpackPlugin, tablePlugin, thematicBreakPlugin, toolbarPlugin } from '@mdxeditor/editor';
 import { useDebouncedFunction } from '../hooks/Debounce';
 import { useBlock } from '../hooks/Block';
 
@@ -45,7 +45,9 @@ export const ALL_PLUGINS = [
     codeBlockPlugin({defaultCodeBlockLanguage: 'js'}),
     sandpackPlugin({ sandpackConfig: simpleSandpackConfig }),
     codeMirrorPlugin({ codeBlockLanguages: { js: 'JavaScript', css: 'CSS' } }),
+    diffSourcePlugin({ diffMarkdown: 'An older version', viewMode: 'rich-text' }),
     toolbarPlugin({toolbarContents: () => (
+      <DiffSourceToggleWrapper>
         <ConditionalContents
           options={[
               { when: (editor) => editor?.editorType === 'codeblock', contents: () => <ChangeCodeMirrorLanguage /> },
@@ -55,7 +57,8 @@ export const ALL_PLUGINS = [
               <InsertSandpack />
             </>) }
             ]}
-          />)
+          />
+        </DiffSourceToggleWrapper>)
       }),
     markdownShortcutPlugin()
   ]
@@ -85,7 +88,12 @@ export const Block: React.FC<BlockProps> = ({ block }) => {
     return (
         <div>
             <input value={title} onChange={handleTitleChange} />
-            <MDXEditor markdown={data} onChange={handleDataChange} plugins={ALL_PLUGINS} />
+            <MDXEditor 
+              className="dark-theme dark-editor prose prose-invert"
+              contentEditableClassName="dark-theme dark-editor prose prose-invert"
+              markdown={data} 
+              onChange={handleDataChange} 
+              plugins={ALL_PLUGINS} />
         </div>
     );
 };
