@@ -27,11 +27,12 @@ class ClickWrapper extends Component<ClickWrapperProps, ClickWrapperState> {
     const elementText = (target as HTMLElement).textContent || '';
 
     if ((target as HTMLElement).tagName !== 'TEXTAREA') {
-        const textarea = document.createElement('textarea');
+      this.setState({ showTextbox: true, clickX: clientX, clickY: clientY, inputValue: elementText });
+        /*const textarea = document.createElement('textarea');
         textarea.value = elementText;
         textarea.setAttribute('data-prevtag', (target as HTMLElement).tagName);
         (target as HTMLElement).parentNode?.replaceChild(textarea, target as HTMLElement);
-        textarea.focus();
+        textarea.focus();*/
     }
     else {
         const prevtag = (target as HTMLElement).getAttribute('data-prevtag') || 'div';
@@ -65,6 +66,7 @@ class ClickWrapper extends Component<ClickWrapperProps, ClickWrapperState> {
             value={inputValue}
             onChange={this.handleTextboxChange}
             onBlur={this.handleTextboxBlur}
+            autoFocus={true}
           />
         )}
       </div>
