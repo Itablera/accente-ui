@@ -1,4 +1,7 @@
 import React, { Component, ReactNode } from 'react';
+import { MDXProvider } from '@mdx-js/react'
+import { compileSync, runSync } from '@mdx-js/mdx'
+import * as runtime from 'react/jsx-runtime'
 
 interface ClickWrapperProps {
   children: ReactNode;
@@ -9,6 +12,7 @@ interface ClickWrapperState {
   clickX: number;
   clickY: number;
   inputValue: string;
+  compiledCode: JSX.Element;
 }
 
 class ClickWrapper extends Component<ClickWrapperProps, ClickWrapperState> {
@@ -18,7 +22,8 @@ class ClickWrapper extends Component<ClickWrapperProps, ClickWrapperState> {
       showTextbox: false,
       clickX: 0,
       clickY: 0,
-      inputValue: '',
+      inputValue: 'Click me!',
+      compiledCode: <>Click me!</>,
     };
   }
 
@@ -27,7 +32,7 @@ class ClickWrapper extends Component<ClickWrapperProps, ClickWrapperState> {
     const elementText = (target as HTMLElement).textContent || '';
 
     if ((target as HTMLElement).tagName !== 'TEXTAREA') {
-      this.setState({ showTextbox: true, clickX: clientX, clickY: clientY, inputValue: elementText });
+      this.setState({ showTextbox: true, clickX: clientX, clickY: clientY });
         /*const textarea = document.createElement('textarea');
         textarea.value = elementText;
         textarea.setAttribute('data-prevtag', (target as HTMLElement).tagName);
@@ -48,17 +53,29 @@ class ClickWrapper extends Component<ClickWrapperProps, ClickWrapperState> {
     this.setState({ inputValue: event.target.value });
   };
 
-  handleTextboxBlur = () => {
+  handleTextboxBlur_bak = () => {
     this.setState({ showTextbox: false });
   };
 
+  handleTextboxBlur = () => {
+    const code = String(compileSync(this.state.inputValue, {outputFormat: 'function-body'}))
+    //@ts-expect-error - baseUrl is not in the official MDX API
+    const compiled = runSync(code, {...runtime, baseUrl: import.meta.url});//e.target.value
+    
+    this.setState({ 
+      showTextbox: false,
+      compiledCode: compiled.default({}),
+     });
+};
+
   render() {
     const { children } = this.props;
-    const { showTextbox, clickX, clickY, inputValue } = this.state;
+    const { showTextbox, clickX, clickY, inputValue, compiledCode } = this.state;
 
     return (
-      <div onClick={this.handleChildClick}>
-        {children}
+      <>
+      <div onClick={this.handleChildClick} className="dark-theme dark-editor prose prose-invert">
+        {compiledCode}
         {showTextbox && (
           <input
             type="text"
@@ -70,6 +87,7 @@ class ClickWrapper extends Component<ClickWrapperProps, ClickWrapperState> {
           />
         )}
       </div>
+      </>
     );
   }
 }
@@ -80,7 +98,7 @@ export default ClickWrapper;
 export const ClickPage: React.FC = () => {
     return (
         <ClickWrapper>
-          <div id='click-container' className="wide dark-theme dark-editor prose prose-invert">
+          <div id='click-container' className="dark-theme dark-editor prose prose-invert">
               <div>Click me!</div>
               <h1>Click me too!</h1>
           </div>
