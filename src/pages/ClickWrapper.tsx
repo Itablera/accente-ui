@@ -29,16 +29,14 @@ class ClickWrapper extends Component<ClickWrapperProps, ClickWrapperState> {
     if ((target as HTMLElement).tagName !== 'TEXTAREA') {
         const textarea = document.createElement('textarea');
         textarea.value = elementText;
-        textarea.setAttribute('data-prevtag', (target as HTMLElement).tagName)
-        textarea.onchange = (e) => {
-            console.log(e);
-        }
+        textarea.setAttribute('data-prevtag', (target as HTMLElement).tagName);
         (target as HTMLElement).parentNode?.replaceChild(textarea, target as HTMLElement);
+        textarea.focus();
     }
     else {
-        const prevtag = (target as HTMLElement).getAttribute('data-prevtag');
+        const prevtag = (target as HTMLElement).getAttribute('data-prevtag') || 'div';
         (target as HTMLElement).removeAttribute('data-prevtag');
-        const newElement = document.createElement(prevtag || 'div');
+        const newElement = document.createElement(prevtag);
         newElement.textContent = (target as HTMLTextAreaElement).value;
         (target as HTMLElement).parentNode?.replaceChild(newElement, target as HTMLElement);
     }
@@ -80,8 +78,10 @@ export default ClickWrapper;
 export const ClickPage: React.FC = () => {
     return (
         <ClickWrapper>
-            <div>Click me!</div>
-            <h1>Click me too!</h1>
+          <div id='click-container' className="wide dark-theme dark-editor prose prose-invert">
+              <div>Click me!</div>
+              <h1>Click me too!</h1>
+          </div>
         </ClickWrapper>
     );
 }

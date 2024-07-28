@@ -11,7 +11,8 @@ import RemarkPage2 from './pages/RemarkPage2';
 import RemarkEditor from './pages/RemarkEditor';
 import { ClickPage } from './pages/ClickWrapper';
 
-
+//Import styles
+import './App.css';
 
 function App() {
   const queryClient = new QueryClient();

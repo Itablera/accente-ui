@@ -1,0 +1,6 @@
+.wide {
+    width: 800px;
+    min-width: 800px;
+    min-height: 800px;
+    background-color: gray;
+  }
