@@ -29,15 +29,9 @@ class ClickWrapper extends Component<ClickWrapperProps, ClickWrapperState> {
 
   handleChildClick = (event: React.MouseEvent<HTMLElement>) => {
     const { clientX, clientY, target } = event;
-    const elementText = (target as HTMLElement).textContent || '';
 
     if ((target as HTMLElement).tagName !== 'TEXTAREA') {
       this.setState({ showTextbox: true, clickX: clientX, clickY: clientY });
-        /*const textarea = document.createElement('textarea');
-        textarea.value = elementText;
-        textarea.setAttribute('data-prevtag', (target as HTMLElement).tagName);
-        (target as HTMLElement).parentNode?.replaceChild(textarea, target as HTMLElement);
-        textarea.focus();*/
     }
     else {
         const prevtag = (target as HTMLElement).getAttribute('data-prevtag') || 'div';
@@ -53,19 +47,15 @@ class ClickWrapper extends Component<ClickWrapperProps, ClickWrapperState> {
     this.setState({ inputValue: event.target.value });
   };
 
-  handleTextboxBlur_bak = () => {
-    this.setState({ showTextbox: false });
-  };
-
   handleTextboxBlur = () => {
     const code = String(compileSync(this.state.inputValue, {outputFormat: 'function-body'}))
     //@ts-expect-error - baseUrl is not in the official MDX API
-    const compiled = runSync(code, {...runtime, baseUrl: import.meta.url});//e.target.value
+    const compiled = runSync(code, {...runtime, baseUrl: import.meta.url});
     
     this.setState({ 
       showTextbox: false,
       compiledCode: compiled.default({}),
-     });
+    });
 };
 
   render() {
