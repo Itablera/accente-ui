@@ -16,6 +16,7 @@ interface ClickWrapperState {
 }
 
 class ClickWrapper extends Component<ClickWrapperProps, ClickWrapperState> {
+  textareaRef: React.RefObject<HTMLTextAreaElement>;
   constructor(props: ClickWrapperProps) {
     super(props);
     this.state = {
@@ -25,26 +26,15 @@ class ClickWrapper extends Component<ClickWrapperProps, ClickWrapperState> {
       inputValue: 'Click me!',
       compiledCode: <>Click me!</>,
     };
+    this.textareaRef = React.createRef();
   }
 
-  handleChildClick = (event: React.MouseEvent<HTMLElement>) => {
-    const { clientX, clientY, target } = event;
-
-    if ((target as HTMLElement).tagName !== 'TEXTAREA') {
-      this.setState({ showTextbox: true, clickX: clientX, clickY: clientY });
-    }
-    else {
-        const prevtag = (target as HTMLElement).getAttribute('data-prevtag') || 'div';
-        (target as HTMLElement).removeAttribute('data-prevtag');
-        const newElement = document.createElement(prevtag);
-        newElement.textContent = (target as HTMLTextAreaElement).value;
-        (target as HTMLElement).parentNode?.replaceChild(newElement, target as HTMLElement);
-    }
-    
+  handleChildClick = () => {
+    this.setState({ showTextbox: true });
   };
 
-  handleTextboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    this.setState({ inputValue: event.target.value });
+  handleTextboxChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    this.setState({ inputValue: event.target.value }, this.adjustTextareaHeight);
   };
 
   handleTextboxBlur = () => {
@@ -56,26 +46,48 @@ class ClickWrapper extends Component<ClickWrapperProps, ClickWrapperState> {
       showTextbox: false,
       compiledCode: compiled.default({}),
     });
-};
+  };
+
+  adjustTextareaHeight = () => {
+    const textarea = this.textareaRef.current as HTMLTextAreaElement;
+    if (textarea) {
+      textarea.style.height = 'auto'; // Reset height to auto to calculate the new height
+      textarea.style.height = `${textarea.scrollHeight}px`; // Set the height to the scroll height
+    }
+  };
+
+  componentDidMount() {
+    this.adjustTextareaHeight();
+  }
+
+  componentDidUpdate() {
+    this.adjustTextareaHeight();
+  }
 
   render() {
-    const { children } = this.props;
-    const { showTextbox, clickX, clickY, inputValue, compiledCode } = this.state;
+    const { showTextbox, inputValue, compiledCode } = this.state;
 
     return (
       <>
+        {!showTextbox && (
       <div onClick={this.handleChildClick} className="dark-theme dark-editor prose prose-invert">
         {!showTextbox && compiledCode}
+          </div>
+        )}
         {showTextbox && (
-          <input
-            type="text"
-            value={inputValue}
-            onChange={this.handleTextboxChange}
-            onBlur={this.handleTextboxBlur}
-            autoFocus={true}
+          <div>
+            {showTextbox && (
+              <textarea
+                ref={this.textareaRef}
+                value={inputValue}
+                onChange={this.handleTextboxChange}
+                onBlur={this.handleTextboxBlur}
+                autoFocus={true}
+                style={{ width: 'fit-content', height: 'auto', overflow: 'hidden' }}
           />
         )}
       </div>
+        )}
       </>
     );
   }
