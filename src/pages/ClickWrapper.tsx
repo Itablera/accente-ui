@@ -65,11 +65,10 @@ class ClickWrapper extends Component<ClickWrapperProps, ClickWrapperState> {
     return (
       <>
       <div onClick={this.handleChildClick} className="dark-theme dark-editor prose prose-invert">
-        {compiledCode}
+        {!showTextbox && compiledCode}
         {showTextbox && (
           <input
             type="text"
-            style={{ position: 'absolute', left: clickX, top: clickY }}
             value={inputValue}
             onChange={this.handleTextboxChange}
             onBlur={this.handleTextboxBlur}
