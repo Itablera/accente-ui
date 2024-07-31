@@ -75,12 +75,12 @@ class ClickWrapper extends Component<ClickWrapperProps, ClickWrapperState> {
     return (
       <>
         <div 
-          className="dark-theme dark-editor prose prose-invert"
-          onFocus={this.handleDivFocus}
-          onBlur={this.handleTextboxBlur}
-          contentEditable={true} >
-            {showTextbox && inputValue || compiledCode}
-          </div>
+        className="dark-theme dark-editor prose prose-invert"
+        onFocus={this.handleDivFocus}
+        onBlur={this.handleTextboxBlur}
+        contentEditable={true} >
+          {showTextbox && inputValue || compiledCode}
+        </div>
       </>
     );
   }
