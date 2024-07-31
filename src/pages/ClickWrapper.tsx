@@ -37,14 +37,19 @@ class ClickWrapper extends Component<ClickWrapperProps, ClickWrapperState> {
     this.setState({ inputValue: event.target.value }, this.adjustTextareaHeight);
   };
 
-  handleTextboxBlur = () => {
-    const code = String(compileSync(this.state.inputValue, {outputFormat: 'function-body'}))
+  handleDivFocus = () => {
+    this.setState({ showTextbox: true });
+  };
+
+  handleTextboxBlur = (event: React.ChangeEvent<HTMLDivElement>) => {
+    const code = String(compileSync(event.target.innerText, {outputFormat: 'function-body'}))
     //@ts-expect-error - baseUrl is not in the official MDX API
     const compiled = runSync(code, {...runtime, baseUrl: import.meta.url});
     
     this.setState({ 
       showTextbox: false,
       compiledCode: compiled.default({}),
+      inputValue: event.target.innerText
     });
   };
 
@@ -69,25 +74,13 @@ class ClickWrapper extends Component<ClickWrapperProps, ClickWrapperState> {
 
     return (
       <>
-        {!showTextbox && (
-      <div onClick={this.handleChildClick} className="dark-theme dark-editor prose prose-invert">
-        {!showTextbox && compiledCode}
+        <div 
+          className="dark-theme dark-editor prose prose-invert"
+          onFocus={this.handleDivFocus}
+          onBlur={this.handleTextboxBlur}
+          contentEditable={true} >
+            {showTextbox && inputValue || compiledCode}
           </div>
-        )}
-        {showTextbox && (
-          <div>
-            {showTextbox && (
-              <textarea
-                ref={this.textareaRef}
-                value={inputValue}
-                onChange={this.handleTextboxChange}
-                onBlur={this.handleTextboxBlur}
-                autoFocus={true}
-                style={{ width: 'fit-content', height: 'auto', overflow: 'hidden' }}
-          />
-        )}
-      </div>
-        )}
       </>
     );
   }
