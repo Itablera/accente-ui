@@ -9,7 +9,12 @@
             "request": "launch",
             "type": "chrome",
             "url": "http://localhost:5173",
-            "webRoot": "${workspaceFolder}/src"
+            "webRoot": "${workspaceFolder}",
+            "sourceMaps": true,
+            "resolveSourceMapLocations": [
+                "${workspaceFolder}/**",
+                "!**/node_modules/**"
+            ],
         },
         {
             "name": "Attach to Chrome",
