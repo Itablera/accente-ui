@@ -4,28 +4,23 @@ import * as runtime from 'react/jsx-runtime'
 import { VFile } from 'vfile';
 
 interface ClickWrapperProps {
+  children?: React.ReactNode;
 }
 
 interface ClickWrapperState {
   showTextbox: boolean;
-  clickX: number;
-  clickY: number;
   inputValue: string;
   compiledCode: JSX.Element;
 }
 
 class ClickWrapper extends Component<ClickWrapperProps, ClickWrapperState> {
-  textareaRef: React.RefObject<HTMLTextAreaElement>;
   constructor(props: ClickWrapperProps) {
     super(props);
     this.state = {
       showTextbox: false,
-      clickX: 0,
-      clickY: 0,
       inputValue: 'Click me!',
       compiledCode: <>Click me!</>,
     };
-    this.textareaRef = React.createRef();
   }
 
   handleChildClick = () => {
@@ -33,7 +28,7 @@ class ClickWrapper extends Component<ClickWrapperProps, ClickWrapperState> {
   };
 
   handleTextboxChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    this.setState({ inputValue: event.target.value }, this.adjustTextareaHeight);
+    this.setState({ inputValue: event.target.value });
   };
 
   handleDivFocus = () => {
@@ -58,22 +53,6 @@ class ClickWrapper extends Component<ClickWrapperProps, ClickWrapperState> {
       inputValue: codeString
     });
   };
-
-  adjustTextareaHeight = () => {
-    const textarea = this.textareaRef.current as HTMLTextAreaElement;
-    if (textarea) {
-      textarea.style.height = 'auto'; // Reset height to auto to calculate the new height
-      textarea.style.height = `${textarea.scrollHeight}px`; // Set the height to the scroll height
-    }
-  };
-
-  componentDidMount() {
-    this.adjustTextareaHeight();
-  }
-
-  componentDidUpdate() {
-    this.adjustTextareaHeight();
-  }
 
   render() {
     const { showTextbox, inputValue, compiledCode } = this.state;
