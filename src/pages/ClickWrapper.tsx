@@ -23,14 +23,6 @@ class ClickWrapper extends Component<ClickWrapperProps, ClickWrapperState> {
     };
   }
 
-  handleChildClick = () => {
-    this.setState({ showTextbox: true });
-  };
-
-  handleTextboxChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    this.setState({ inputValue: event.target.value });
-  };
-
   handleDivFocus = () => {
     this.setState({ showTextbox: true });
   };
