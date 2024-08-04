@@ -47,7 +47,8 @@
     "remark-gfm": "^4.0.0",
     "remark-rehype": "^11.1.0",
     "tailwindcss": "^3.4.0",
-    "unified": "^11.0.4"
+    "unified": "^11.0.4",
+    "vfile": "^6.0.2"
   },
   "devDependencies": {
     "@types/hast": "^3.0.3",

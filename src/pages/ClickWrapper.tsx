@@ -1,10 +1,9 @@
-import React, { Component, ReactNode } from 'react';
-import { MDXProvider } from '@mdx-js/react'
+import React, { Component } from 'react';
 import { compileSync, runSync } from '@mdx-js/mdx'
 import * as runtime from 'react/jsx-runtime'
+import { VFile } from 'vfile';
 
 interface ClickWrapperProps {
-  children: ReactNode;
 }
 
 interface ClickWrapperState {
@@ -42,14 +41,21 @@ class ClickWrapper extends Component<ClickWrapperProps, ClickWrapperState> {
   };
 
   handleTextboxBlur = (event: React.ChangeEvent<HTMLDivElement>) => {
-    const code = String(compileSync(event.target.innerText, {outputFormat: 'function-body'}))
+    const codeString = event.target.innerText || '';
+    // Create virtual file, vFile, to store the code
+    const vFile = new VFile({
+      basename: 'example.mdx',
+      value: codeString,
+
+    })
+    const code = String(compileSync(vFile, {outputFormat: 'function-body'}))
     //@ts-expect-error - baseUrl is not in the official MDX API
     const compiled = runSync(code, {...runtime, baseUrl: import.meta.url});
     
     this.setState({ 
       showTextbox: false,
       compiledCode: compiled.default({}),
-      inputValue: event.target.innerText
+      inputValue: codeString
     });
   };
 
@@ -78,7 +84,8 @@ class ClickWrapper extends Component<ClickWrapperProps, ClickWrapperState> {
         className="dark-theme dark-editor prose prose-invert"
         onFocus={this.handleDivFocus}
         onBlur={this.handleTextboxBlur}
-        contentEditable={true} >
+        contentEditable={true}
+        suppressContentEditableWarning={true} >
           {showTextbox && inputValue || compiledCode}
         </div>
       </>
@@ -91,11 +98,6 @@ export default ClickWrapper;
 
 export const ClickPage: React.FC = () => {
     return (
-        <ClickWrapper>
-          <div id='click-container' className="dark-theme dark-editor prose prose-invert">
-              <div>Click me!</div>
-              <h1>Click me too!</h1>
-          </div>
-        </ClickWrapper>
+        <ClickWrapper />
     );
 }
