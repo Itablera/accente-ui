@@ -27,8 +27,8 @@ class ClickWrapper extends Component<ClickWrapperProps, ClickWrapperState> {
     this.setState({ showTextbox: true });
   };
 
-  handleTextboxBlur = () => {
-    const codeString = this.state.inputValue;
+  handleTextboxBlur = (event: React.ChangeEvent<HTMLDivElement>) => {
+    const codeString = event.target.innerText || '';
     // Create virtual file, vFile, to store the code
     const vFile = new VFile({
       basename: 'example.mdx',
@@ -41,7 +41,8 @@ class ClickWrapper extends Component<ClickWrapperProps, ClickWrapperState> {
     
     this.setState({ 
       showTextbox: false,
-      compiledCode: compiled.default({})
+      compiledCode: compiled.default({}),
+      inputValue: codeString
     });
   };
 
@@ -50,26 +51,15 @@ class ClickWrapper extends Component<ClickWrapperProps, ClickWrapperState> {
 
     return (
       <>
-        {!showTextbox && 
-        <div
-        onClick={this.handleDivFocus} 
-        className="dark-theme dark-editor prose prose-invert">
-          {compiledCode}
-        </div>
-        }
-        {showTextbox &&
-        <div
+        <div 
         className="dark-theme dark-editor prose prose-invert"
-        >
-          <textarea 
-          rows={inputValue.split('\n').length + 1}
-          value={inputValue}
-          onChange={(event) => this.setState({ inputValue: event.target.value })}
-          onBlur={this.handleTextboxBlur}
-          autoFocus={true}
-          spellCheck={false} />
+        style={showTextbox && { whiteSpace: 'pre-line' } || {}}
+        onFocus={this.handleDivFocus}
+        onBlur={this.handleTextboxBlur}
+        contentEditable={true}
+        suppressContentEditableWarning={true} >
+          {showTextbox && inputValue || compiledCode}
         </div>
-      }
       </>
     );
   }
