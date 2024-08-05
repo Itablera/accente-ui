@@ -1,0 +1,50 @@
+export function WriteWorld() {
+  return <>World</>
+}
+
+export function AsList(items) {
+  return (
+    <ul>
+      {items.map(item => (
+        <li key={item.id}>{item.name}</li>
+      ))}
+    </ul>
+  )
+}
+
+export function AsMarkdownList(items) {
+  return (<>
+    {items.map(item => (
+      `- ${item.name}`
+    ))}
+  </>
+  )
+}
+
+export const world = 'World'
+
+export const items = [
+  { id: 1, name: 'Item 1' },
+  { id: 2, name: 'Item 2' },
+  { id: 3, name: 'Item 3' },
+]
+
+# Wanted state 
+
+I would like to use inline eg. 2+2 = {2+2} 
+
+To use functions to render content using pre-defined Components eg. {WriteWorld()} or like <WriteWorld />
+
+To create a list eg.
+<ul>
+  {items.map(item => <li key={item.id}>{item.name}</li>)}
+</ul>
+
+Or as a function eg. 
+{AsList(items)}
+
+Or as a component eg.
+```<AsList items={items} />``` (seems not to work in mdx standalone)
+
+Or why not as a markdown list
+{AsMarkdownList(items)}

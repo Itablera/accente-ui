@@ -8,12 +8,17 @@
             "name": "Launch Chrome",
             "request": "launch",
             "type": "chrome",
-            "url": "http://localhost:3000",
-            "webRoot": "${workspaceFolder}/src"
+            "url": "http://localhost:5173",
+            "webRoot": "${workspaceFolder}",
+            "sourceMaps": true,
+            "resolveSourceMapLocations": [
+                "${workspaceFolder}/**",
+                "!**/node_modules/**"
+            ],
         },
         {
             "name": "Attach to Chrome",
-            "port": 3000,
+            "port": 5173,
             "request": "attach",
             "type": "chrome",
             "webRoot": "${workspaceFolder}/src"

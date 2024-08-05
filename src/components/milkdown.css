@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+
+.milkdown {
+    @apply bg-slate-50 px-2 py-4 m-5 border rounded;
+  }
+  
+.editor {
+    @apply mx-auto;
+}
+
+.split-editor {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: 1fr;
+  color: black;
+}
+
+.split-editor:has(.milkdown-split-editor.hidden) {
+  grid-template-columns: repeat(1, 1fr);
+}
+
+.milkdown-split-editor.hidden {
+  display: none;
+}

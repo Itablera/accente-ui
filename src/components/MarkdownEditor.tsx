@@ -1,11 +1,11 @@
 import React from 'react';
-import { MDXEditor, codeBlockPlugin, codeMirrorPlugin, diffSourcePlugin, frontmatterPlugin, headingsPlugin, imagePlugin, linkDialogPlugin, linkPlugin, listsPlugin, markdownShortcutPlugin, quotePlugin, tablePlugin, thematicBreakPlugin, toolbarPlugin } from '@mdxeditor/editor';
+import { MDXEditor, codeBlockPlugin, codeMirrorPlugin, diffSourcePlugin, frontmatterPlugin, headingsPlugin, imagePlugin, linkDialogPlugin, linkPlugin, listsPlugin, markdownShortcutPlugin, quotePlugin, tablePlugin, thematicBreakPlugin } from '@mdxeditor/editor';
 
 export const ALL_PLUGINS = [
   //toolbarPlugin({ toolbarContents: () => <KitchenSinkToolbar /> }), //Gets error about missing plugin or label viewMode
   listsPlugin(),
   quotePlugin(),
-  headingsPlugin(),
+  headingsPlugin({allowedHeadingLevels: [1, 2, 3, 4, 5, 6]}),
   linkPlugin(),
   linkDialogPlugin(),
   imagePlugin(),
