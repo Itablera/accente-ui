@@ -59,7 +59,6 @@ class ClickWrapper extends Component<ClickWrapperProps, ClickWrapperState> {
     return (
       <>
         <div 
-        className="dark-theme dark-editor prose prose-invert"
         style={showTextbox && { whiteSpace: 'pre-line' } || {}}
         onFocus={this.handleDivFocus}
         onBlur={this.handleTextboxBlur}

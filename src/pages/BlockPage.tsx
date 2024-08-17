@@ -13,7 +13,7 @@ export const BlockPage: React.FC = () => {
     }
     
     return (
-        <div>
+        <div className="dark-theme dark-editor prose prose-invert">
             <Block block={block} />
         </div>
     );
