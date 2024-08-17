@@ -13,9 +13,10 @@ export const Block: React.FC<BlockProps> = ({ block }) => {
     const [ data, setData ] = useState(block.data);
     const { setBlock: setPersistedData } = useBlock(block._id);
     const debouncedAPICall = useDebouncedFunction(setPersistedData, 5000)
-    const handleTitleChange = (change: ChangeEvent<HTMLInputElement>) => {
-        setTitle(change.target.value);
-        debouncedAPICall({data: { title: change.target.value }});
+    const handleTitleChange = (change: string) => {
+        const title = change;
+        setTitle(title);
+        debouncedAPICall({data: { title }});
     }
     const handleDataChange = (change: string) => {
         setData(change);
@@ -28,7 +29,7 @@ export const Block: React.FC<BlockProps> = ({ block }) => {
 
     return (
         <div>
-            <input value={title} onChange={handleTitleChange} />
+            <h1><ClickWrapper inputValue={title} onChange={handleTitleChange} /></h1>
             <ClickWrapper 
               inputValue={data}
               onChange={handleDataChange} />

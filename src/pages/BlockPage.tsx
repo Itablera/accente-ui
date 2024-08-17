@@ -14,7 +14,6 @@ export const BlockPage: React.FC = () => {
     
     return (
         <div>
-            <h1>Block Page </h1>
             <Block block={block} />
         </div>
     );
