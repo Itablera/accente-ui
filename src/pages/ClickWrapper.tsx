@@ -4,12 +4,12 @@ import * as runtime from 'react/jsx-runtime'
 import { VFile } from 'vfile';
 
 interface ClickWrapperProps {
-  children?: React.ReactNode;
+  inputValue?: string;
 }
 
 interface ClickWrapperState {
   showTextbox: boolean;
-  inputValue: string;
+  plainText: string;
   compiledCode: JSX.Element;
 }
 
@@ -18,8 +18,8 @@ class ClickWrapper extends Component<ClickWrapperProps, ClickWrapperState> {
     super(props);
     this.state = {
       showTextbox: false,
-      inputValue: 'Click me!',
-      compiledCode: <>Click me!</>,
+      plainText: props.inputValue || 'Click me!',
+      compiledCode: props.inputValue && this.compile(props.inputValue) ||<>Click me!</>,
     };
   }
 
@@ -27,8 +27,7 @@ class ClickWrapper extends Component<ClickWrapperProps, ClickWrapperState> {
     this.setState({ showTextbox: true });
   };
 
-  handleTextboxBlur = (event: React.ChangeEvent<HTMLDivElement>) => {
-    const codeString = event.target.innerText || '';
+  compile(codeString = '') {
     // Create virtual file, vFile, to store the code
     const vFile = new VFile({
       basename: 'example.mdx',
@@ -38,16 +37,22 @@ class ClickWrapper extends Component<ClickWrapperProps, ClickWrapperState> {
     const code = String(compileSync(vFile, {outputFormat: 'function-body'}))
     //@ts-expect-error - baseUrl is not in the official MDX API
     const compiled = runSync(code, {...runtime, baseUrl: import.meta.url});
+
+    return compiled.default({});
+  }
+
+  handleTextboxBlur = (event: React.ChangeEvent<HTMLDivElement>) => {
+    const codeString = event.target.innerText || '';
     
     this.setState({ 
       showTextbox: false,
-      compiledCode: compiled.default({}),
-      inputValue: codeString
+      compiledCode: this.compile(codeString),
+      plainText: codeString
     });
   };
 
   render() {
-    const { showTextbox, inputValue, compiledCode } = this.state;
+    const { showTextbox, plainText: inputValue, compiledCode } = this.state;
 
     return (
       <>
@@ -70,6 +75,6 @@ export default ClickWrapper;
 
 export const ClickPage: React.FC = () => {
     return (
-        <ClickWrapper />
+        <ClickWrapper inputValue='# Hej' />
     );
 }
