@@ -1,6 +1,6 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import ListBlocksPage from './pages/ListBlocksPage';
+import SourcePage from './pages/ListBlocksPage';
 import BlockPage from './pages/BlockPage';
 import EditorLabPage from './pages/EditorLab';
 import MdxPage from './pages/MdxPage';
@@ -22,9 +22,9 @@ function App() {
         <div className="App">
           <BrowserRouter>
               <Routes>
-                  <Route path="/" element={<ListBlocksPage />} />
-                  <Route path="/block" element={<BlockPage />} />
-                  <Route path="/block/:id" element={<BlockPage />} />
+                  <Route path="/" element={<SourcePage />} />
+                  <Route path="/:sourceId" element={<SourcePage />} />
+                  <Route path="/:sourceId/:id" element={<BlockPage />} />
                   <Route path="/lab" element={<EditorLabPage />} />
                   <Route path="/milkdown" element={<MilkdownLabPage />} />
                   <Route path="/mdx" element={<MdxPage />} />

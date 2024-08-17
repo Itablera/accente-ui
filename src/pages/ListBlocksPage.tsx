@@ -1,10 +1,11 @@
 // pages/ListBlocksPage.tsx
 import React, {  } from 'react';
-import { Link } from 'react-router-dom';
-import { useBlocks } from '../hooks/Blocks';
+import { Link, useParams } from 'react-router-dom';
+import { useSource } from '../hooks/Source';
 
-export const ListBlocksPage: React.FC = () => {
-    const { blocks, addBlock } = useBlocks();
+export const SourcePage: React.FC = () => {
+    const { sourceId = 'browser' } = useParams<{ sourceId: string }>();
+    const { blocks, addBlock } = useSource(sourceId);
 
     if (!blocks) {
         return <div>Loading...</div>;
@@ -20,7 +21,7 @@ export const ListBlocksPage: React.FC = () => {
             <ul>
                 {blocks.map((block) => (
                     <li key={block._id}>
-                        <Link to={`/block/${block._id}`}>{block.title}</Link>
+                        <Link to={`/${sourceId}/${block._id}`}>{block.title}</Link>
                     </li>
                 ))}
             </ul>
@@ -29,4 +30,4 @@ export const ListBlocksPage: React.FC = () => {
     );
 };
 
-export default ListBlocksPage;
+export default SourcePage;
