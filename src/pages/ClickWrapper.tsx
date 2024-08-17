@@ -5,6 +5,7 @@ import { VFile } from 'vfile';
 
 interface ClickWrapperProps {
   inputValue?: string;
+  onChange?: (change: string) => void;
 }
 
 interface ClickWrapperState {
@@ -43,6 +44,7 @@ class ClickWrapper extends Component<ClickWrapperProps, ClickWrapperState> {
 
   handleTextboxBlur = (event: React.ChangeEvent<HTMLDivElement>) => {
     const codeString = event.target.innerText || '';
+    this.props.onChange && this.props.onChange(codeString || '');
     
     this.setState({ 
       showTextbox: false,
