@@ -24,7 +24,7 @@ function App() {
               <Routes>
                   <Route path="/" element={<SourcePage />} />
                   <Route path="/:sourceId" element={<SourcePage />} />
-                  <Route path="/:sourceId/:id" element={<BlockPage />} />
+                  <Route path="/:sourceId/*" element={<BlockPage />} />
                   <Route path="/lab" element={<EditorLabPage />} />
                   <Route path="/milkdown" element={<MilkdownLabPage />} />
                   <Route path="/mdx" element={<MdxPage />} />

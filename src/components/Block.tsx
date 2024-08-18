@@ -11,7 +11,7 @@ interface BlockProps {
 export const Block: React.FC<BlockProps> = ({ block }) => {
     const [ title, setTitle ] = useState(block.title);
     const [ data, setData ] = useState(block.data);
-    const { setBlock: setPersistedData } = useBlock(block._id);
+    const { setBlock: setPersistedData } = useBlock('browser', block.path);
     const debouncedAPICall = useDebouncedFunction(setPersistedData, 5000)
     const handleTitleChange = (change: string) => {
         const title = change;

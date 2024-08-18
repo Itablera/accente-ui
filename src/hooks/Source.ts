@@ -6,7 +6,7 @@ import { create, fetch } from '../services/dbService';
 type Blocks = {
     blocks: IBlockDoc[] | undefined;
     addBlock: UseMutateFunction<IBlock, unknown, {
-        data: Partial<IBlock>;
+        data: IBlock;
         options?: MutationOptions<unknown, Error, void, unknown> | undefined;
     }, unknown>;
     isLoading: boolean;
@@ -15,14 +15,14 @@ type Blocks = {
 
 type SourceFunctions = {
     queryFn: () => Promise<IBlockDoc[]>;
-    mutationFn: ({ data }: { data: Partial<IBlockDoc> }) => Promise<IBlock>;
+    mutationFn: ({ data }: { data: IBlock }) => Promise<IBlockDoc>;
 };
 const getSourceFunctions = (source: string): SourceFunctions => {
     switch (source) {
         case 'browser':
             return {
                 queryFn: () => fetch<IBlockDoc>('blocks'),
-                mutationFn: ({ data }: { data: Partial<IBlockDoc> }) => create<IBlockDoc>('blocks', data),
+                mutationFn: ({ data }: { data: IBlock }) => create<IBlockDoc>('blocks', data),
             };
         default:
             throw new Error('Invalid source');
@@ -42,7 +42,7 @@ export const useSource: UseSource = (source = 'browser') => {
     });
 
     // Update localStorage
-    const { mutate: addBlock } = useMutation<IBlock, unknown, { data: Partial<IBlock>; options?: MutationOptions; }>({
+    const { mutate: addBlock } = useMutation<IBlockDoc, unknown, { data: IBlock; options?: MutationOptions; }>({
         mutationFn,
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ['blocks'] }),
     });

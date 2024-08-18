@@ -5,11 +5,14 @@ import { useBlock } from '../hooks/Block';
 import { Block } from '../components/Block';
 
 export const BlockPage: React.FC = () => {
-    const { id = '' } = useParams<{ id: string }>();
-    const { block, isFetching, isLoading } = useBlock(id);
+    const { '*': path = '' } = useParams<{ '*': string }>();
+    const { block, isFetching, isLoading } = useBlock('browser', path);
 
-    if (!block || isLoading || isFetching) {
+    if (isLoading || isFetching) {
         return <div>Loading...</div>;
+    }
+    if (!block) {
+        return <div>Block not found</div>;
     }
     
     return (

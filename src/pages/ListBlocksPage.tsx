@@ -12,7 +12,7 @@ export const SourcePage: React.FC = () => {
     }
 
     const handleAddBlock = () => {
-        addBlock({ data: { title: 'New Block', data: '' } });
+        addBlock({ data: { title: 'New Block', data: '', path: 'asd', type: 'text' } });
     }
 
     return (
