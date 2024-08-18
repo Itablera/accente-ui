@@ -12,22 +12,39 @@ type UseBlockReturn = {
     isLoading: boolean;
     isFetching: boolean;
 };
-type UseBlock = (id: string, defaultValue?: IBlock) => UseBlockReturn;
 
-export const useBlock: UseBlock = (id: string) => {
+type SourceFunctions = {
+    queryFn: () => Promise<IBlockDoc>;
+    mutationFn: ({ data }: { data: Partial<IBlockDoc> }) => Promise<IBlock>;
+};
+const getSourceFunctions = (source: string, path: string): SourceFunctions => {
+    switch (source) {
+        case 'browser':
+            return {
+                queryFn: () => fetchSingle('blocks', path),
+                mutationFn: ({ data }) => update<IBlockDoc>('blocks', path, data),
+            };
+        default:
+            throw new Error('Invalid source');
+    }
+}
+
+type UseBlock = (source: string, path: string, defaultValue?: IBlock) => UseBlockReturn;
+export const useBlock: UseBlock = (source: string = 'local', path: string) => {
     const queryClient = useQueryClient();
+    const { queryFn, mutationFn } = getSourceFunctions(source, path);
 
     // Fetching data from localStorage
     const { data: block, isLoading, isFetching } = useQuery<IBlockDoc, unknown>({
-        queryKey: ['blocks', id],
-        queryFn: () => fetchSingle('blocks', id),
+        queryKey: ['blocks', path],
+        queryFn,
         staleTime: Infinity,
     });
 
     // Update localStorage
     const { mutate: setBlock } = useMutation<IBlock, unknown, { data: Partial<IBlockDoc>; options?: MutationOptions; }>({
-        mutationFn: ({ data }) => update<IBlockDoc>('blocks', id, data),
-        onSuccess: () => queryClient.invalidateQueries({ queryKey: ['blocks', id] }),
+        mutationFn,
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: ['blocks', path] }),
     });
 
     return { block, setBlock, isLoading, isFetching };
