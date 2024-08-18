@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState } from 'react';
+import React, { useState } from 'react';
 import { IBlockDoc } from '../models/Block';
 import { useDebouncedFunction } from '../hooks/Debounce';
 import { useBlock } from '../hooks/Block';
@@ -9,14 +9,14 @@ interface BlockProps {
 }
 
 export const Block: React.FC<BlockProps> = ({ block }) => {
-    const [ title, setTitle ] = useState(block.title);
+    const [ path, setPath ] = useState(block.path);
     const [ data, setData ] = useState(block.data);
     const { setBlock: setPersistedData } = useBlock('browser', block.path);
     const debouncedAPICall = useDebouncedFunction(setPersistedData, 5000)
-    const handleTitleChange = (change: string) => {
-        const title = change;
-        setTitle(title);
-        debouncedAPICall({data: { title }});
+    const handlePathChange = (change: string) => {
+        const newPath = change;
+        setPath(newPath);
+        debouncedAPICall({data: { path: newPath }});
     }
     const handleDataChange = (change: string) => {
         setData(change);
@@ -29,7 +29,7 @@ export const Block: React.FC<BlockProps> = ({ block }) => {
 
     return (
         <div>
-            <h1><ClickWrapper inputValue={title} onChange={handleTitleChange} /></h1>
+            <h1><ClickWrapper inputValue={path} onChange={handlePathChange} /></h1>
             <ClickWrapper 
               inputValue={data}
               onChange={handleDataChange} />

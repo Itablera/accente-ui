@@ -2,7 +2,6 @@ import { IDoc } from "./DB";
 
 export interface IBlock {
     path: string;
-    title: string;
     type: 'text' | 'file';
     data: string;  // Assuming data is a string for simplicity
 }

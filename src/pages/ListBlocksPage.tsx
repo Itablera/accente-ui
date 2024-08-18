@@ -12,7 +12,7 @@ export const SourcePage: React.FC = () => {
     }
 
     const handleAddBlock = () => {
-        addBlock({ data: { title: 'New Block', data: '', path: 'asd', type: 'text' } });
+        addBlock({ data: { path: 'New Block', data: '', type: 'text' } });
     }
 
     return (
@@ -21,7 +21,7 @@ export const SourcePage: React.FC = () => {
             <ul>
                 {blocks.map((block) => (
                     <li key={block._id}>
-                        <Link to={`/${sourceId}/${block._id}`}>{block.title}</Link>
+                        <Link to={`/${sourceId}/${block.path}`}>{block.path}</Link>
                     </li>
                 ))}
             </ul>
